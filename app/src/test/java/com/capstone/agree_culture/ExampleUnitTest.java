@@ -1,4 +1,4 @@
-package com.example.agree_culture;
+package com.capstone.agree_culture;
 
 import org.junit.Test;
 

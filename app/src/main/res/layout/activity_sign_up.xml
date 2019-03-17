@@ -9,8 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:background="@android:color/transparent">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -22,5 +21,10 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_sign_up" />
+
+    <include
+        android:id="@+id/progress_bar"
+        layout="@layout/progress_bar"
+        android:visibility="gone" />
 
 </android.support.design.widget.CoordinatorLayout>

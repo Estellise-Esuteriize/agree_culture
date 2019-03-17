@@ -1,4 +1,4 @@
-package com.example.agree_culture;
+package com.capstone.agree_culture;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.agree_culture", appContext.getPackageName());
+        assertEquals("com.capstone.agree_culture", appContext.getPackageName());
     }
 }

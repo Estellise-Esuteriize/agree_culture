@@ -8,8 +8,11 @@
     <string name="action_settings">Settings</string>
 
 
-    <!-- Home Strings -->
+    <!-- Authentication check if user exists -->
+    <string name="user_exists">Currently thereis a user sign in</string>
 
+
+    <!-- Home Strings -->
     <string name="home_login">Login</string>
     <string name="home_logo_cont_description">Home Logo</string>
     <string name="home_search_hint">Search : Rice, Beans, and ETC.</string>
@@ -37,7 +40,7 @@
 
     <!-- sign up related -->
     <string name="sign_up_name">Full Name</string>
-    <string name="sign_up_username">Username</string>
+    <string name="sign_up_username">Email</string>
     <string name="sign_up_password">Password</string>
     <string name="sign_up_confirm_password">Confirm Password</string>
     <string name="sign_up_address">Address</string>
@@ -45,5 +48,25 @@
     <string name="sign_up_phone_number_prefix">+63</string>
     <string name="sign_up_phone_number">982384818</string>
     <string name="sign_up_string">Sign Up</string>
+
+    <!-- Sign up Spinner items -->
+    <string name="sign_up_user_type_placeholder">Choose Role</string>
+    <string-array name="sign_up_user_type">
+        <item>Customer</item>
+        <item>Seller</item>
+        <item>Distributor</item>
+    </string-array>
+
+    <!-- Sign up errors message -->
+    <string name="sign_up_full_name_no_text">Full name is required</string>
+    <string name="sign_up_full_name_limit">Full name must be lesser than 25 characters</string>
+    <string name="sign_up_email_no_text">Email is required</string>
+    <string name="sign_up_email_not_valid">Must be a valid email</string>
+    <string name="sign_up_email_exists">Email already exists</string>
+    <string name="sign_up_password_no_text">Password is required</string>
+    <string name="sign_up_password_confirmation_required">Password must be the same</string>
+    <string name="sign_up_address_required">Address is required</string>
+    <string name="sign_up_city_required">City is required</string>
+    <string name="sign_up_phone_number_required">Phone number is required</string>
 
 </resources>
