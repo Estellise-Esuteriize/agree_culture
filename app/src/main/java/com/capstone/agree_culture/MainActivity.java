@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -19,7 +21,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.capstone.agree_culture.Fragments.MainMenu;
+import com.capstone.agree_culture.Fragments.MenuProducts;
 import com.capstone.agree_culture.Helper.GlobalString;
+import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseApp;
@@ -27,6 +32,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.storage.FirebaseStorage;
 
 public class MainActivity extends AppCompatActivity
@@ -40,13 +46,23 @@ public class MainActivity extends AppCompatActivity
 
     private User currentUser;
 
-    private EditText home_search;
-    private Button home_distibutor;
-    private Button home_seller;
-
     private ImageView user_photo;
     private TextView user_full_name;
     private TextView user_email;
+
+    /**
+     * Fragment
+     * Fragment Transaction Variable
+     */
+    FragmentTransaction fragment_transaction;
+    int fragment = R.id.main_frame_content;
+
+    /**
+     * Fragments
+     * variables
+     */
+    MainMenu main_menu = new MainMenu();
+    MenuProducts menu_products = new MenuProducts();
 
     private Context cont;
 
@@ -58,6 +74,17 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         cont = this;
+
+        if(!Helper.isFirestoreSettingsInitialize){
+            FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                    .setTimestampsInSnapshotsEnabled(true)
+                    .build();
+            FirebaseFirestore.getInstance().setFirestoreSettings(settings);
+
+            Helper.isFirestoreSettingsInitialize = true;
+
+        }
+
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseFirestore.getInstance();
@@ -81,33 +108,29 @@ public class MainActivity extends AppCompatActivity
         user_full_name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_full_name);
         user_email = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_email);
 
-        home_search = (EditText) findViewById(R.id.home_search_text);
-        home_distibutor = (Button) findViewById(R.id.home_button_distributor);
-        home_seller = (Button) findViewById(R.id.home_button_seller);
+
+        fragment_transaction = getSupportFragmentManager().beginTransaction();
+        fragment_transaction.replace(fragment, main_menu);
+        fragment_transaction.commit();
+
 
 
         if(mUser != null){
 
-            home_search.setVisibility(View.VISIBLE);
-            home_distibutor.setVisibility(View.VISIBLE);
-            home_seller.setVisibility(View.VISIBLE);
             invalidateOptionsMenu();
-
 
             mDatabase.collection(USERS).document(mUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                 @Override
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
+
                     currentUser = documentSnapshot.toObject(User.class);
 
-                    if(currentUser.getRole() == GlobalString.DISTRIBUTOR || currentUser.getRole() == GlobalString.CUSTOMER){
-                        home_distibutor.setEnabled(false);
-                    }
-                    else if(currentUser.getRole() == GlobalString.SELLER){
-                        home_seller.setEnabled(false);
-                    }
+                    main_menu.initializedHome(currentUser);
 
-                    user_full_name.setText(currentUser.getFull_name());
+                    user_full_name.setText(getResources().getString(R.string.home_full_name, currentUser.getFull_name(), currentUser.getRole()));
+                    //currentUser.getFull_name() + getResources().getString(R.string.open_parenthesis_space) + currentUser.getRole()  + getResources().getString(R.string.close_parenthesis_space));
                     user_email.setText(mUser.getEmail());
+
                 }
             });
         }
@@ -160,8 +183,16 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_home) {
             // Handle the camera action
-        } else if (id == R.id.nav_products) {
+            fragment_transaction = getSupportFragmentManager().beginTransaction();
+            fragment_transaction.replace(fragment, main_menu);
+            fragment_transaction.commit();
 
+        } else if (id == R.id.nav_products) {
+            if(mUser != null){
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menu_products);
+                fragment_transaction.commit();
+            }
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_logout) {
@@ -191,6 +222,8 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

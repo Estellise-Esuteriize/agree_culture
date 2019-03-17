@@ -64,6 +64,12 @@ public class SignUpActivity extends AppCompatActivity {
 
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
@@ -93,10 +99,6 @@ public class SignUpActivity extends AppCompatActivity {
          * Firebase Firestore
          */
         mDatabase = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
-        mDatabase.setFirestoreSettings(settings);
 
         cont = this;
 

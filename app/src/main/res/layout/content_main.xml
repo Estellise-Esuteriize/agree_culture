@@ -5,11 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <ImageView
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:id="@+id/home_logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,6 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/edittext_white_background"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:paddingStart="5dp"
