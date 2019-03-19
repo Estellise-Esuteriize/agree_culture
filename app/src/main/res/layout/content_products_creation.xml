@@ -30,7 +30,7 @@
                 android:textAllCaps="true"
                 android:textStyle="bold"
                 android:background="#229910"
-                android:text="@string/product_creat_btn"
+                android:text="@string/product_create_btn"
                 android:layout_marginEnd="50dp"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="35dp"

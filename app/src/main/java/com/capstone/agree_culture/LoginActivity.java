@@ -87,8 +87,6 @@ public class LoginActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
-
-
         // Set up the login form.
 
         sign_in_email = (EditText) findViewById(R.id.email);

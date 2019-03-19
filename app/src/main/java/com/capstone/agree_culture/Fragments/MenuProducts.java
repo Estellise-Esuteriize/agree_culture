@@ -1,5 +1,6 @@
 package com.capstone.agree_culture.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.capstone.agree_culture.ProductsCreationActivity;
 import com.capstone.agree_culture.R;
 
 public class MenuProducts extends Fragment {
@@ -30,12 +32,14 @@ public class MenuProducts extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
 
+
+
         float_button = (FloatingActionButton) view.findViewById(R.id.fab);
         float_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(getActivity(), ProductsCreationActivity.class);
+                startActivity(intent);
             }
         });
 

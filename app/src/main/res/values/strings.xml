@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">agree_culture</string>
 
+    <string name="label">Label</string>
+
     <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -9,13 +11,14 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="nav_messages">Messages</string>
     <string name="nav_my_cart">My Cart</string>
+
     <string name="nav_orders">Orders</string>
 
     <string name="action_settings">Settings</string>
 
 
     <!-- Authentication check if user exists -->
-    <string name="user_exists">Currently thereis a user sign in</string>
+    <string name="user_exists">Currently there is a user sign in</string>
 
 
     <!-- Home Strings -->
@@ -80,6 +83,28 @@
     <string name="title_activity_menu_products">MenuProducts</string>
     <string name="title_activity_products_creation">ProductsCreationActivity</string>
     <string name="title_activity_products_update">ProductsUpdateActivity</string>
+
+    <!-- Create Product -->
+    <string name="product_create_btn">Create</string>
+    <string name="product_create_basic">Basic Information</string>
+    <string name="product_create_name_label">Product Name</string>
+    <string name="product_create_name">Product Name</string>
+    <string name="product_create_transaction_details">Transaction Details</string>
+    <string name="product_create_price_label">Price</string>
+    <string name="product_create_price">0.00</string>
+    <string name="product_create_quantity_label">Quantity</string>
+    <string name="product_create_quantity">0</string>
+    <string name="product_create_minimum_label">Minimum</string>
+    <string name="product_create_minimun">0</string>
+
+    <!-- Update Product -->
+    <string name="product_update_disable">Disable</string>
+    <string name="product_update_enable">Enable</string>
+    <string name="product_update_btn">Update</string>
+
+
+    <!-- Recyclerview Product List -->
+    <string name="main_menu_product_list_item"><b>PHP :</b> %1$s, <b>Quantity : </b>%2$d, \n<b>Minimum : </b>%3$d</string>
 
 
 </resources>
