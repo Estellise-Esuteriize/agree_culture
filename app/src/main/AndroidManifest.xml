@@ -18,9 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
+            android:name=".ProductsUpdateActivity"
+            android:label="@string/title_activity_products_update"
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar"></activity>
+        <activity
             android:name=".ProductsCreationActivity"
             android:label="@string/title_activity_products_creation"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
         <activity
             android:name=".SignUpActivity"
             android:label="@string/title_activity_sign_up"

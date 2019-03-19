@@ -4,8 +4,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ProductsCreationActivity"
     tools:showIn="@layout/activity_products_creation">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/include_product_create_update"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                android:background="#229910"
+                android:text="@string/product_creat_btn"
+                android:layout_marginEnd="50dp"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="25dp"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

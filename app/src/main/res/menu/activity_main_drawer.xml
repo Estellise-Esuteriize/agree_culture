@@ -12,6 +12,18 @@
             android:id="@+id/nav_products"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Products" />
+        <item
+            android:id="@+id/nav_messages"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/nav_messages"/>
+        <item
+            android:id="@+id/nav_my_cart"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/nav_my_cart"/>
+        <item
+            android:id="@+id/nav_orders"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="@string/nav_orders" />
         <!--<item-->
             <!--android:id="@+id/nav_slideshow"-->
             <!--android:icon="@drawable/ic_menu_slideshow"-->

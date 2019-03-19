@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">agree_culture</string>
+
+    <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Agree Culture</string>
     <string name="nav_header_subtitle">agree.culture@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="nav_messages">Messages</string>
+    <string name="nav_my_cart">My Cart</string>
+    <string name="nav_orders">Orders</string>
+
     <string name="action_settings">Settings</string>
 
 
@@ -73,6 +79,7 @@
     <string name="sign_up_phone_number_required">Phone number is required</string>
     <string name="title_activity_menu_products">MenuProducts</string>
     <string name="title_activity_products_creation">ProductsCreationActivity</string>
+    <string name="title_activity_products_update">ProductsUpdateActivity</string>
 
 
 </resources>

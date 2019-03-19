@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ProductsUpdateActivity"
+    tools:showIn="@layout/activity_products_update">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:scrollbars="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="25dp">
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/product_update_disable"
+                    android:layout_width="@dimen/product_update_status_width"
+                    android:layout_height="@dimen/product_update_status_height"
+                    android:background="@drawable/product_update_disable"
+                    android:text="@string/product_update_disable"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/product_update_enable"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/product_update_enable"
+                    android:layout_width="@dimen/product_update_status_width"
+                    android:layout_height="@dimen/product_update_status_height"
+                    android:background="@drawable/product_update_enable_btn"
+                    android:text="@string/product_update_enable"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/product_update_disable"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+            <include
+                layout="@layout/include_product_create_update"/>
+
+
+            <android.support.v7.widget.AppCompatButton
+                android:background="@color/color_green"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="25dp"
+                android:layout_marginEnd="35dp"
+                android:layout_marginStart="35dp"
+                android:textStyle="bold"
+                android:text="@string/product_update_btn"
+                android:textAllCaps="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</android.support.constraint.ConstraintLayout>
