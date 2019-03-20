@@ -6,10 +6,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.NumberFormat;
 
@@ -21,14 +25,22 @@ public class ProductsCreationActivity extends AppCompatActivity {
     private EditText product_quantity;
     private EditText product_minimum;
 
-
-    private NumberFormat currentFormat;
-
+    private String user_uuid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products_creation);
+
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user == null){
+            finish();
+        }
+        else{
+            user_uuid = user.getUid();
+        }
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -44,10 +56,10 @@ public class ProductsCreationActivity extends AppCompatActivity {
         product_quantity = (EditText) findViewById(R.id.product_create_quantity);
         product_minimum = (EditText) findViewById(R.id.product_create_minimum);
 
-        currentFormat = NumberFormat.getCurrencyInstance();
-
 
         product_price.addTextChangedListener(new PriceCurrencyFormat());
+
+
 
 
     }
@@ -59,8 +71,32 @@ public class ProductsCreationActivity extends AppCompatActivity {
     }
 
 
+    class CreateProduct implements View.OnClickListener{
 
-    
+        @Override
+        public void onClick(View v) {
+            String prod_name = product_name.getText().toString();
+            Double prod_price = Double.parseDouble(product_price.getText().toString());
+            Integer prod_quantity = Integer.parseInt(product_quantity.getText().toString());
+            Integer prod_minimum = Integer.parseInt(product_minimum.getText().toString());
+
+            Boolean has_error = false;
+
+            if(TextUtils.isEmpty(prod_name)){
+                product_name.setError(getResources().getString(R.string.product_create_name_error));
+                has_error = true;
+            }
+
+            if(prod_price <= 0){
+                product_price.setError(getResources().getString(R.string.product_create_number_error, 'Price'));
+                has_error = true;
+            }
+
+
+
+
+        }
+    }
 
 
     class PriceCurrencyFormat implements TextWatcher{

@@ -97,13 +97,17 @@
     <string name="product_create_minimum_label">Minimum</string>
     <string name="product_create_minimun">0</string>
 
+    <!-- Create Product Error -->
+    <string name="product_create_name_error">Product name is required</string>
+    <string name="product_create_number_error">%1$s must not be lesser than or equal to zero</string>
+
     <!-- Update Product -->
     <string name="product_update_disable">Disable</string>
     <string name="product_update_enable">Enable</string>
     <string name="product_update_btn">Update</string>
 
 
-    <!-- Recyclerview Product List -->
+    <!-- Recycler view Product List -->
     <string name="main_menu_product_list_item"><b>PHP :</b> %1$s, <b>Quantity : </b>%2$d, \n<b>Minimum : </b>%3$d</string>
 
 
