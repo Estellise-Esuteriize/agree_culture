@@ -20,6 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capstone.agree_culture.Helper.GlobalString;
+import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.model.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -104,6 +106,10 @@ public class ProductsCreationActivity extends AppCompatActivity {
         product_price.addTextChangedListener(new PriceCurrencyFormat());
         product_create_btn.setOnClickListener(new CreateProduct());
 
+        if(!Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
+            product_quantity.setEnabled(false);
+        }
+
 
     }
 
@@ -148,7 +154,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
                 has_error = true;
             }
 
-            if (prod_quantity <= 0) {
+            if (prod_quantity <= 0 && Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)) {
                 product_quantity.setError(getResources().getString(R.string.product_create_number_error, "Quantity"));
                 has_error = true;
             }

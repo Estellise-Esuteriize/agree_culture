@@ -13,13 +13,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.capstone.agree_culture.Fragments.MainMenu;
 import com.capstone.agree_culture.Fragments.MenuProducts;
@@ -64,6 +67,11 @@ public class MainActivity extends AppCompatActivity
     MainMenu main_menu = new MainMenu();
     MenuProducts menu_products = new MenuProducts();
 
+    /**
+     * Menu
+     */
+    private Menu menu;
+
     private Context cont;
 
     private final static String USERS = "users";
@@ -85,7 +93,6 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseFirestore.getInstance();
 
@@ -103,6 +110,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        menu = navigationView.getMenu();
 
         user_photo = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.user_photo);
         user_full_name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.user_full_name);
@@ -124,6 +133,16 @@ public class MainActivity extends AppCompatActivity
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                     currentUser = documentSnapshot.toObject(User.class);
+
+                    if(currentUser != null){
+
+                        Helper.currentUser = currentUser;
+
+                        if(currentUser.getRole().equals(GlobalString.CUSTOMER)){
+                            menu.findItem(R.id.nav_products).setVisible(false);
+                            menu.findItem(R.id.nav_orders).setVisible(false);
+                        }
+                    }
 
                     main_menu.initializedHome(currentUser);
 
@@ -150,6 +169,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         if(mUser == null){
             getMenuInflater().inflate(R.menu.main, menu);
         }
