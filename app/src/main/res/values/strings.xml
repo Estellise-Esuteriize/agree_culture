@@ -26,9 +26,9 @@
     <string name="home_logo_cont_description">Home Logo</string>
     <string name="home_search_hint">Search : Rice, Beans, and ETC.</string>
     <string name="home_button_dist">Distributor</string>
-    <string name="home_button_sell">Seller</string>
+    <string name="home_button_sell">Supplier</string>
     <string name="home_button_cont_dist">Distributor</string>
-    <string name="home_button_cont_sell">Seller</string>
+    <string name="home_button_cont_sell">Supplier</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Drawer Layout -->
