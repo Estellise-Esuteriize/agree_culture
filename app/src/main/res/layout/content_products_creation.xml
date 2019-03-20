@@ -27,6 +27,7 @@
                 layout="@layout/include_product_create_update"/>
 
             <android.support.v7.widget.AppCompatButton
+                android:id="@+id/product_create_btn"
                 android:textAllCaps="true"
                 android:textStyle="bold"
                 android:background="#229910"

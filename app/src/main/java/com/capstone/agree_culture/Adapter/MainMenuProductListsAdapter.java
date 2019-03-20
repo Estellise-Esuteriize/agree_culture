@@ -12,16 +12,20 @@ import android.widget.TextView;
 import com.capstone.agree_culture.R;
 import com.capstone.agree_culture.model.Product;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuProductListsAdapter.MyViewHolder> {
 
     private List<Product> products;
 
+    private DecimalFormat format;
 
 
     public MainMenuProductListsAdapter(List<Product> products){
         this.products = products;
+
+        format = new DecimalFormat("#,###,###");
     }
 
     @NonNull
@@ -35,8 +39,12 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
         Product product = products.get(i);
 
         myViewHolder.product_label.setText(product.getProduct_name());
-        myViewHolder.product_detail.setText("");
-        myViewHolder.product_desc.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, product.getProduct_price(), product.getProduct_quantity(), product.getProduct_minimum()));
+        myViewHolder.product_desc.setText("----------");
+
+
+
+
+        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
 
     }
 

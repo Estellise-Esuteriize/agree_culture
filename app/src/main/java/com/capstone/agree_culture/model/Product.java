@@ -74,4 +74,10 @@ public class Product implements Serializable {
     public void setCollection_id(String collection_id) {
         this.collection_id = collection_id;
     }
+
+
+    public String toString(){
+        return "Name : " + product_name + " , " + "Price : " + product_price;
+    }
+
 }

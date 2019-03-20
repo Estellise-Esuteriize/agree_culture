@@ -108,7 +108,7 @@
 
 
     <!-- Recycler view Product List -->
-    <string name="main_menu_product_list_item"><b>PHP :</b> %1$d, <b>Quantity : </b>%2$d, \n<b>Minimum : </b>%3$d</string>
+    <string name="main_menu_product_list_item"><b>PHP :</b> %1$s, \n<b>Quantity : </b>%2$s, \n<b>Minimum : </b>%3$s</string>
 
 
 </resources>
