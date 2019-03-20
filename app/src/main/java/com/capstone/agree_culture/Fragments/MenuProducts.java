@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.capstone.agree_culture.Adapter.MainMenuProductListsAdapter;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.ProductsCreationActivity;
 import com.capstone.agree_culture.R;
@@ -58,10 +61,11 @@ public class MenuProducts extends Fragment {
 
     /**
      * Recycler view
+     * Adapter for Recyclerview
      */
 
     private RecyclerView product_recyclerview;
-
+    private MainMenuProductListsAdapter mAdapter;
 
     private Boolean isInitialize = false;
 
@@ -86,6 +90,12 @@ public class MenuProducts extends Fragment {
             product_recyclerview = view.findViewById(R.id.menu_products_list);
             progress_bar = view.findViewById(R.id.progress_bar);
 
+            mAdapter = new MainMenuProductListsAdapter(products);
+            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+            product_recyclerview.setLayoutManager(mLayoutManager);
+            product_recyclerview.setItemAnimator(new DefaultItemAnimator());
+            product_recyclerview.setAdapter(mAdapter);
+
             if(products.isEmpty()){
                 progress_bar.setVisibility(View.VISIBLE);
 
@@ -99,6 +109,9 @@ public class MenuProducts extends Fragment {
                                 products.add(document.toObject(Product.class));
                                 products.get(products.size() - 1).setCollection_id(document.getId());
                             }
+
+                            mAdapter.notifyDataSetChanged();
+
                         }
                         else{
                             try{

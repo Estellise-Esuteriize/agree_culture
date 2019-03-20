@@ -19,7 +19,7 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
     private List<Product> products;
 
 
-    
+
     public MainMenuProductListsAdapter(List<Product> products){
         this.products = products;
     }
