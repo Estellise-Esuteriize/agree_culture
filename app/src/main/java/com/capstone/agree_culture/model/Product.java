@@ -1,7 +1,11 @@
 package com.capstone.agree_culture.model;
 
-public class Product {
+import java.io.Serializable;
 
+public class Product implements Serializable {
+
+
+    private String collection_id;
 
     private String user_id;
     private String product_name;
@@ -61,5 +65,13 @@ public class Product {
 
     public void setProduct_minimum(Integer product_minimum) {
         this.product_minimum = product_minimum;
+    }
+
+    public String getCollection_id() {
+        return collection_id;
+    }
+
+    public void setCollection_id(String collection_id) {
+        this.collection_id = collection_id;
     }
 }

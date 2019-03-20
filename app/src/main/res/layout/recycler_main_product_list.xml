@@ -29,6 +29,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/main_menu_product_list_label"
             android:textSize="13sp"
             android:text="@string/label"
             android:textStyle="bold"
@@ -36,6 +37,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/main_menu_product_list_desc"
             android:layout_marginTop="5dp"
             android:text="@string/label"
             android:textSize="13sp"
@@ -43,6 +45,7 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/main_menu_product_list_detal"
             android:maxLines="2"
             android:ellipsize="none"
             android:text="@string/main_menu_product_list_item"

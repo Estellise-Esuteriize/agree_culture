@@ -8,4 +8,6 @@ public class GlobalString {
 
     public static String USER = "users";
 
+    public static String PRODUCTS = "products";
+
 }
