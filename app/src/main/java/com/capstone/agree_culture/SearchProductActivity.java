@@ -81,12 +81,18 @@ public class SearchProductActivity extends AppCompatActivity {
                             products.get(products.size() - 1).setCollection_id(document.getId());
                         }
 
-                        Log.d("ProductsSize", "" + products.size());
+                        if(!products.isEmpty()){
+                            Log.d("ProductsSize", "" + products.size());
 
-                        progress_bar.setVisibility(View.GONE);
-                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                            progress_bar.setVisibility(View.GONE);
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
-                        searchAdapter.notifyDataSetChanged();
+                            searchAdapter.notifyDataSetChanged();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), getResources().getString(R.string.product_search_no_available), Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                     else{
                         try{

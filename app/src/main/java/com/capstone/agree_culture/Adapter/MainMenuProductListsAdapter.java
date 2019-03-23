@@ -70,7 +70,7 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
         myViewHolder.product_desc.setText("----------");
 
         myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
-        
+
         myViewHolder.product_delete.setOnClickListener(new ProductDelete(product));
 
         myViewHolder.itemView.setOnClickListener(new ProductUpdate(product));
