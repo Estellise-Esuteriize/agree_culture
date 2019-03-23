@@ -3,6 +3,10 @@
 
     <string name="label">Label</string>
 
+    <string name="product">Product</string>
+    <string name="ok">OK</string>
+    <string name="cancel">CANCEL</string>
+
     <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -105,9 +109,12 @@
     <string name="product_update_disable">Disable</string>
     <string name="product_update_enable">Enable</string>
     <string name="product_update_btn">Update</string>
+    <string name="product_update_success">Successfully update product</string>
 
 
     <!-- Recycler view Product List -->
+    <string name="main_menu_product_delete_message">Delete this product?</string>
+    <string name="main_menu_product_delete_success">Successfully deleted product.</string>
     <string name="main_menu_product_list_item"><b>PHP :</b> %1$s, \n<b>Quantity : </b>%2$s, \n<b>Minimum : </b>%3$s</string>
     <string name="title_activity_search_product">SearchProductActivity</string>
 

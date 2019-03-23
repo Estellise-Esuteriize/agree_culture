@@ -36,7 +36,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuProducts extends Fragment {
+public class MenuProducts extends Fragment implements MainMenuProductListsAdapter.OnProductClick {
 
 
     private List<Product> products = new ArrayList<Product>();
@@ -44,6 +44,7 @@ public class MenuProducts extends Fragment {
     private FloatingActionButton float_button;
 
     private final int ADD_PRODUCT_ID = 111;
+    private final int PRODUCT_UPDATE_ID = 101;
 
     private View progress_bar;
 
@@ -69,8 +70,6 @@ public class MenuProducts extends Fragment {
     private RecyclerView product_recyclerview;
     private MainMenuProductListsAdapter mAdapter;
 
-    private Boolean isInitialize = false;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -83,7 +82,6 @@ public class MenuProducts extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
         mDatabase = FirebaseFirestore.getInstance();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -92,7 +90,7 @@ public class MenuProducts extends Fragment {
         product_recyclerview = view.findViewById(R.id.menu_products_list);
         progress_bar = view.findViewById(R.id.progress_bar);
 
-        mAdapter = new MainMenuProductListsAdapter(products);
+        mAdapter = new MainMenuProductListsAdapter(products, this, this);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         product_recyclerview.setLayoutManager(mLayoutManager);
         product_recyclerview.setItemAnimator(new DefaultItemAnimator());
@@ -142,16 +140,10 @@ public class MenuProducts extends Fragment {
         float_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                Log.d("OhYeahh", "Fack You");
-
                 Intent intent = new Intent(getActivity(), ProductsCreationActivity.class);
                 startActivityForResult(intent, ADD_PRODUCT_ID);
             }
         });
-
-
-        product_recyclerview.setAdapter(mAdapter);
 
     }
 
@@ -163,10 +155,27 @@ public class MenuProducts extends Fragment {
             products.add(0, product);
             mAdapter.notifyItemInserted(0);
         }
+        else if(requestCode == PRODUCT_UPDATE_ID && resultCode == Activity.RESULT_OK){
+            Product product = (Product)data.getExtras().getSerializable("product");
+            int index = data.getExtras().getInt("position", 0);
+
+            products.remove(index);
+            products.add(index, product);
+
+            mAdapter.notifyDataSetChanged();
+
+        }
+
+        Log.d("STATUS", "I WAS IN HERE");
 
 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
 
+    @Override
+    public void onDelete(Product product) {
+        products.remove(product);
+        mAdapter.notifyDataSetChanged();
+    }
 }

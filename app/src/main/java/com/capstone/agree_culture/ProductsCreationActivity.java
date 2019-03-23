@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.model.Product;
+import com.capstone.agree_culture.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.rpc.Help;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -67,6 +70,8 @@ public class ProductsCreationActivity extends AppCompatActivity {
      */
     private Product product;
 
+    private User currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +87,8 @@ public class ProductsCreationActivity extends AppCompatActivity {
         else{
             user_uuid = user.getUid();
         }
+
+        currentUser = Helper.currentUser;
 
 
         cont = this;
@@ -106,7 +113,8 @@ public class ProductsCreationActivity extends AppCompatActivity {
         product_price.addTextChangedListener(new PriceCurrencyFormat());
         product_create_btn.setOnClickListener(new CreateProduct());
 
-        if(!Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
+        if(!currentUser.getRole().equals(GlobalString.SUPPLIER)){
+            product_quantity.getBackground().setAlpha(64);
             product_quantity.setEnabled(false);
         }
 
@@ -126,23 +134,32 @@ public class ProductsCreationActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             String prod_name;
-            Double prod_price;
-            Integer prod_quantity;
-            Integer prod_minimum;
+            double prod_price;
+            int prod_quantity;
+            int prod_minimum;
             try{
                 prod_name = product_name.getText().toString();
                 prod_price = Double.parseDouble(product_price.getText().toString().replaceAll(",", ""));
-                prod_quantity = Integer.parseInt(product_quantity.getText().toString());
-                prod_minimum = Integer.parseInt(product_minimum.getText().toString());
+                prod_quantity = 0;
+                prod_minimum = 0;
+
+                if(!currentUser.getRole().equals(GlobalString.DISTRIBUTOR)){
+                    prod_quantity = Integer.parseInt(product_quantity.getText().toString());
+                }
+                if(!TextUtils.isEmpty(product_minimum.getText().toString())){
+                    prod_minimum = Integer.parseInt(product_minimum.getText().toString());
+                }
             }
             catch (Exception ex){
 
+                ex.printStackTrace();
+
                 Toast.makeText(cont, ex.getMessage(), Toast.LENGTH_LONG).show();
 
-                return ;
+                return;
             }
 
-            Boolean has_error = false;
+            boolean has_error = false;
 
             if (TextUtils.isEmpty(prod_name)) {
                 product_name.setError(getResources().getString(R.string.product_create_name_error));
@@ -168,7 +185,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
 
                 progress_bar.setVisibility(View.VISIBLE);
 
-                product = new Product(user_uuid, prod_name, prod_price, prod_quantity, prod_minimum);
+                product = new Product(user_uuid, prod_name, prod_price, prod_quantity, prod_minimum, Helper.currentUser.getRole());
 
                 mDatabase.collection("products").add(product).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
