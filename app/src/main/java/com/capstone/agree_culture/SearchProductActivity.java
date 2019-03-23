@@ -41,12 +41,12 @@ public class SearchProductActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search_product);
 
         mDatabase = FirebaseFirestore.getInstance();
 
-        progress_bar = (ProgressBar) findViewById(R.id.progress_bar);
+        progress_bar = findViewById(R.id.progress_bar);
 
-        setContentView(R.layout.activity_search_product);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -62,13 +62,9 @@ public class SearchProductActivity extends AppCompatActivity {
         recyclerView.setAdapter(searchAdapter);
 
         final String search_data = getIntent().getStringExtra("search_data");
-        Toast.makeText(this, search_data.toString(), Toast.LENGTH_SHORT).show();
-
-        Product prod = new Product("Test1","Test2", 2.00, 2, 2);
-        products.add(prod);
-        searchAdapter.notifyDataSetChanged();
 
         if(products.isEmpty()){
+            Log.d("Acabal","Acabal");
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             progress_bar.setVisibility(View.VISIBLE);

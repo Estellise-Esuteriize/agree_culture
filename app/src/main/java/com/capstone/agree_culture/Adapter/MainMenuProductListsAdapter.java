@@ -44,7 +44,8 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
 
 
 
-        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
+        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item,
+                format.format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
 
     }
 

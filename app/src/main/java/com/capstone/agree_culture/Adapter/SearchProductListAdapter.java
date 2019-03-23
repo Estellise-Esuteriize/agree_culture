@@ -1,5 +1,6 @@
 package com.capstone.agree_culture.Adapter;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,14 +12,18 @@ import android.widget.TextView;
 import com.capstone.agree_culture.R;
 import com.capstone.agree_culture.model.Product;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProductListAdapter.MyViewHolder> {
 
     private List<Product> products;
+    private DecimalFormat format;
 
     public SearchProductListAdapter(List<Product> products) {
         this.products = products;
+
+        format = new DecimalFormat("#,###,###");
     }
 
     @NonNull
@@ -29,9 +34,11 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
+        Product product = products.get(i);
 
-        myViewHolder.product_name.setText("Saging");
-        myViewHolder.product_detail.setText("Kaon Kaon ta");
+        myViewHolder.product_name.setText(product.getProduct_name());
+        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format
+                .format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
     }
 
     @Override
