@@ -84,14 +84,15 @@ public class SearchProductActivity extends AppCompatActivity {
                         if(!products.isEmpty()){
                             Log.d("ProductsSize", "" + products.size());
 
-                            progress_bar.setVisibility(View.GONE);
-                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
                             searchAdapter.notifyDataSetChanged();
                         }
                         else{
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.product_search_no_available), Toast.LENGTH_SHORT).show();
                         }
+
+
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        progress_bar.setVisibility(View.GONE);
 
                     }
                     else{
