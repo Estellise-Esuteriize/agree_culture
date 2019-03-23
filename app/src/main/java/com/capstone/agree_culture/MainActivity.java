@@ -153,6 +153,13 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
+        else{
+            menu.findItem(R.id.nav_products).setVisible(false);
+            menu.findItem(R.id.nav_messages).setVisible(false);
+            menu.findItem(R.id.nav_my_cart).setVisible(false);
+            menu.findItem(R.id.nav_orders).setVisible(false);
+            menu.findItem(R.id.nav_logout).setVisible(false);
+        }
 
     }
 
