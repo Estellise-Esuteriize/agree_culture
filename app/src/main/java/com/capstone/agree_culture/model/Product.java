@@ -31,6 +31,7 @@ public class Product implements Serializable {
         this.product_name = product_name;
         this.product_price = product_price;
         this.product_quantity = product_quantity;
+        this.product_minimum = product_minimum;
         this.user_product_type = user_product_type;
         this.product_status = PRODUCT_STATUS_ENABLE;
     }

@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.model.Product;
+import com.capstone.agree_culture.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,6 +34,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.rpc.Help;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -68,6 +70,8 @@ public class ProductsCreationActivity extends AppCompatActivity {
      */
     private Product product;
 
+    private User currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +87,8 @@ public class ProductsCreationActivity extends AppCompatActivity {
         else{
             user_uuid = user.getUid();
         }
+
+        currentUser = Helper.currentUser;
 
 
         cont = this;
@@ -107,7 +113,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
         product_price.addTextChangedListener(new PriceCurrencyFormat());
         product_create_btn.setOnClickListener(new CreateProduct());
 
-        if(!Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
+        if(!currentUser.getRole().equals(GlobalString.SUPPLIER)){
             product_quantity.getBackground().setAlpha(64);
             product_quantity.setEnabled(false);
         }
@@ -134,14 +140,23 @@ public class ProductsCreationActivity extends AppCompatActivity {
             try{
                 prod_name = product_name.getText().toString();
                 prod_price = Double.parseDouble(product_price.getText().toString().replaceAll(",", ""));
-                prod_quantity = Integer.parseInt(product_quantity.getText().toString());
-                prod_minimum = Integer.parseInt(product_minimum.getText().toString());
+                prod_quantity = 0;
+                prod_minimum = 0;
+
+                if(!currentUser.getRole().equals(GlobalString.DISTRIBUTOR)){
+                    prod_quantity = Integer.parseInt(product_quantity.getText().toString());
+                }
+                if(!TextUtils.isEmpty(product_minimum.getText().toString())){
+                    prod_minimum = Integer.parseInt(product_minimum.getText().toString());
+                }
             }
             catch (Exception ex){
 
+                ex.printStackTrace();
+
                 Toast.makeText(cont, ex.getMessage(), Toast.LENGTH_LONG).show();
 
-                return ;
+                return;
             }
 
             boolean has_error = false;
