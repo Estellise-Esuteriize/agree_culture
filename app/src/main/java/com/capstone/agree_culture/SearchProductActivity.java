@@ -71,7 +71,7 @@ public class SearchProductActivity extends AppCompatActivity {
 
 
             mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("product_name", search_data).whereEqualTo("user_product_type",
-                    Helper.userProductType(Helper.currentUser.getRole())).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    Helper.userProductType(Helper.currentUser.getRole())).whereEqualTo("product_status", Product.PRODUCT_STATUS_ENABLE).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
