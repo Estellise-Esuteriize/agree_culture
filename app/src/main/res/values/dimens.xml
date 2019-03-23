@@ -8,7 +8,7 @@
 
     <!-- product update disable and enable dimen -->
     <dimen name="product_update_status_width">130dp</dimen>
-    <dimen name="product_update_status_height">35</dimen>
+    <dimen name="product_update_status_height">35dp</dimen>
 
     <!-- product list main menu -->
     <dimen name="main_menu_product_list">70dp</dimen>

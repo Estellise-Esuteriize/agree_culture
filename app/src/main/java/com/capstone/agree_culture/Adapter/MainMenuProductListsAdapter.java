@@ -1,17 +1,32 @@
 package com.capstone.agree_culture.Adapter;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.capstone.agree_culture.Helper.GlobalString;
+import com.capstone.agree_culture.Helper.Helper;
+import com.capstone.agree_culture.ProductsUpdateActivity;
 import com.capstone.agree_culture.R;
 import com.capstone.agree_culture.model.Product;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -21,11 +36,24 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
 
     private DecimalFormat format;
 
+    private FirebaseFirestore mDatabase;
 
-    public MainMenuProductListsAdapter(List<Product> products){
+    private Context context;
+
+    private Fragment fragment;
+
+    private OnProductClick onProduct;
+
+    private final int PRODUC_UPDATE_ID = 101;
+
+    public MainMenuProductListsAdapter(List<Product> products, OnProductClick onProduct, Fragment fragment){
         this.products = products;
+        this.onProduct = onProduct;
+        this.fragment = fragment;
 
         format = new DecimalFormat("#,###,###");
+
+        mDatabase = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -41,10 +69,12 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
         myViewHolder.product_label.setText(product.getProduct_name());
         myViewHolder.product_desc.setText("----------");
 
-
-
-
         myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
+
+
+        myViewHolder.product_delete.setOnClickListener(new ProductDelete(product));
+
+        myViewHolder.itemView.setOnClickListener(new ProductUpdate(product));
 
     }
 
@@ -62,6 +92,8 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            context = itemView.getContext();
+
             product_image = itemView.findViewById(R.id.main_menu_product_list_image);
             product_label = itemView.findViewById(R.id.main_menu_product_list_label);
             product_desc = itemView.findViewById(R.id.main_menu_product_list_desc);
@@ -69,6 +101,79 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
             product_delete = itemView.findViewById(R.id.main_menu_product_list_delete);
 
         }
+    }
+
+    class ProductUpdate implements View.OnClickListener{
+
+        private Product product;
+        private int position;
+
+        ProductUpdate(Product product){
+            this.product = product;
+
+            position = products.indexOf(product);
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(context, ProductsUpdateActivity.class);
+            intent.putExtra("product", product);
+            intent.putExtra("position", position);
+            fragment.startActivityForResult(intent, PRODUC_UPDATE_ID);
+
+        }
+    }
+
+    class ProductDelete implements View.OnClickListener{
+
+        private Product product;
+
+
+        ProductDelete(Product product){
+            this.product = product;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.setTitle(context.getResources().getString(R.string.product));
+            dialog.setMessage(context.getResources().getString(R.string.main_menu_product_delete_message));
+            dialog.setCancelable(true);
+            dialog.setPositiveButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollection_id()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            onProduct.onDelete(product);
+                            Toast.makeText(context, context.getResources().getString(R.string.main_menu_product_delete_success), Toast.LENGTH_SHORT).show();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+
+                }
+            }).setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            dialog.create().show();
+
+        }
+    }
+
+
+    public interface OnProductClick{
+        void onDelete(Product product);
     }
 
 }

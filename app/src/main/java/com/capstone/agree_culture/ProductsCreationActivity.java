@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -107,6 +108,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
         product_create_btn.setOnClickListener(new CreateProduct());
 
         if(!Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
+            product_quantity.getBackground().setAlpha(64);
             product_quantity.setEnabled(false);
         }
 
@@ -126,9 +128,9 @@ public class ProductsCreationActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             String prod_name;
-            Double prod_price;
-            Integer prod_quantity;
-            Integer prod_minimum;
+            double prod_price;
+            int prod_quantity;
+            int prod_minimum;
             try{
                 prod_name = product_name.getText().toString();
                 prod_price = Double.parseDouble(product_price.getText().toString().replaceAll(",", ""));
@@ -142,7 +144,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
                 return ;
             }
 
-            Boolean has_error = false;
+            boolean has_error = false;
 
             if (TextUtils.isEmpty(prod_name)) {
                 product_name.setError(getResources().getString(R.string.product_create_name_error));
@@ -168,7 +170,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
 
                 progress_bar.setVisibility(View.VISIBLE);
 
-                product = new Product(user_uuid, prod_name, prod_price, prod_quantity, prod_minimum);
+                product = new Product(user_uuid, prod_name, prod_price, prod_quantity, prod_minimum, Helper.currentUser.getRole());
 
                 mDatabase.collection("products").add(product).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                     @Override
