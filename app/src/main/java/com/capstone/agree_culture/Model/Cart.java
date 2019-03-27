@@ -1,5 +1,7 @@
 package com.capstone.agree_culture.Model;
 
+import com.google.firebase.firestore.FieldValue;
+
 import java.util.Date;
 
 public class Cart {
@@ -28,7 +30,7 @@ public class Cart {
 
     }
 
-    public Cart(String productName, int productQuantity, double productPrice, String productUidRef, String ownerUidRef, String buyerUidRef, Date createdAt){
+    public Cart(String productName, int productQuantity, double productPrice, String productUidRef, String ownerUidRef, String buyerUidRef){
         this.productName = productName;
         this.productQuantity = productQuantity;
         this.productPrice = productPrice;
@@ -36,8 +38,6 @@ public class Cart {
         this.ownerUidRef = ownerUidRef;
         this.buyerUidRef = buyerUidRef;
         this.buyerStatus = cart;
-        this.createdAt = createdAt;
-        this.updatedAt = createdAt;
     }
 
 

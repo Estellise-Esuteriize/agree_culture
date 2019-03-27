@@ -1,6 +1,14 @@
 package com.capstone.agree_culture.Model;
 
+import android.text.TextUtils;
+
+import com.google.android.gms.flags.impl.DataUtils;
+
+import org.apache.commons.lang3.text.WordUtils;
+
 import java.io.Serializable;
+
+import io.opencensus.internal.StringUtil;
 
 public class Product implements Serializable {
 
@@ -29,7 +37,7 @@ public class Product implements Serializable {
 
     public Product(String user_id, String product_name, Double product_price, Integer product_quantity, Integer product_minimum, String user_product_type){
         this.user_id = user_id;
-        this.product_name = product_name;
+        this.product_name = WordUtils.capitalizeFully(product_name);
         this.product_price = product_price;
         this.product_quantity = product_quantity;
         this.product_minimum = product_minimum;
