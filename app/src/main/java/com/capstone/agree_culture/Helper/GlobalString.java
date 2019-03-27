@@ -10,4 +10,6 @@ public class GlobalString {
 
     public static String PRODUCTS = "products";
 
+    public static String CART = "cart";
+
 }

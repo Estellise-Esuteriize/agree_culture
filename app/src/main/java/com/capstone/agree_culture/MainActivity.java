@@ -124,6 +124,7 @@ public class MainActivity extends AppCompatActivity
                 public void onSuccess(DocumentSnapshot documentSnapshot) {
 
                     currentUser = documentSnapshot.toObject(User.class);
+                    currentUser.setDocumentId(mUser.getUid());
 
                     if(currentUser != null){
 

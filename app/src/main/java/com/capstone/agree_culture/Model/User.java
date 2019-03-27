@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class User {
 
+
+    private String documentId;
     private String full_name;
     private String role;
     private String address;
@@ -68,5 +70,13 @@ public class User {
 
     public void setCreated_at(Date created_at) {
         this.created_at = created_at;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 }

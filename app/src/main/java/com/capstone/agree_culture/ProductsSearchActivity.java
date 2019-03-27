@@ -1,11 +1,15 @@
 package com.capstone.agree_culture;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -39,6 +43,9 @@ public class ProductsSearchActivity extends AppCompatActivity {
 
     private String searchKeyword;
 
+
+    private final int SMS_MESSAGE = 107;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +73,7 @@ public class ProductsSearchActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         searchLayout = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(searchLayout);
-        searchAdapter = new SearchProductListAdapter(products);
+        searchAdapter = new SearchProductListAdapter(products, this);
 
         recyclerView.setAdapter(searchAdapter);
 
@@ -101,6 +108,8 @@ public class ProductsSearchActivity extends AppCompatActivity {
                                         User user = (User)document.toObject(User.class);
 
                                         products.get(index).setUser(user);
+                                        products.get(index).getUser().setDocumentId(document.getId());
+
                                         searchAdapter.notifyItemChanged(index);
 
                                     }
@@ -153,6 +162,19 @@ public class ProductsSearchActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if(requestCode == SMS_MESSAGE && resultCode == Activity.RESULT_OK){
+
+        }
+
+        Log.d("Message", "Activity Result for Message is success");
+
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
