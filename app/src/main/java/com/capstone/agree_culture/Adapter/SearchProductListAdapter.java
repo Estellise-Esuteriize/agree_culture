@@ -24,10 +24,12 @@ import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.R;
 import com.capstone.agree_culture.Model.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.text.DecimalFormat;
@@ -183,25 +185,39 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    mDatabase.collection(GlobalString.CART).document().set(cart).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    mDatabase.collection(GlobalString.CART).whereEqualTo("ownerUidRef", cart.getOwnerUidRef()).whereEqualTo("buyerUidRef", cart.getBuyerUidRef()).whereEqualTo("productUidRef", cart.getProductUidRef()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                            if(task.isSuccessful()){
-                                Toast.makeText(context, context.getResources().getString(R.string.card_add_success), Toast.LENGTH_LONG).show();
+                            if(queryDocumentSnapshots.isEmpty()){
+
+                                mDatabase.collection(GlobalString.CART).document().set(cart).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(context, context.getResources().getString(R.string.card_add_success), Toast.LENGTH_LONG).show();
+                                        } else {
+                                            try {
+
+                                                throw task.getException();
+
+                                            } catch (Exception ex) {
+                                                Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+
+                                    }
+                                });
+
                             }
                             else{
-                                try{
-
-                                    throw task.getException();
-
-                                }catch (Exception ex){
-                                    Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
-                                }
+                                Toast.makeText(context, context.getResources().getString(R.string.cart_add_product_exists), Toast.LENGTH_SHORT).show();
                             }
 
                         }
                     });
+
 
                 }
             }).setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {

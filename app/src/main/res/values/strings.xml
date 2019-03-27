@@ -136,6 +136,7 @@
 
     <!-- add to cart error -->
     <string name="cart_add_error">Error accessing messaging app</string>
+    <string name="cart_add_product_exists">Product already added to cart</string>
 
 
 
