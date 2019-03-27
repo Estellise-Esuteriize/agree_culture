@@ -2,25 +2,22 @@ package com.capstone.agree_culture;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.capstone.agree_culture.Adapter.SearchProductListAdapter;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
-import com.capstone.agree_culture.R;
-import com.capstone.agree_culture.model.Product;
+import com.capstone.agree_culture.Model.Product;
+import com.capstone.agree_culture.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -28,7 +25,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchProductActivity extends AppCompatActivity {
+public class ProductsSearchActivity extends AppCompatActivity {
+
+
     private RecyclerView recyclerView;
     private SearchProductListAdapter searchAdapter;
     private List<Product> products = new ArrayList<Product>();
@@ -38,6 +37,8 @@ public class SearchProductActivity extends AppCompatActivity {
 
     private View progress_bar;
 
+    private String searchKeyword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,13 +46,21 @@ public class SearchProductActivity extends AppCompatActivity {
 
         mDatabase = FirebaseFirestore.getInstance();
 
-        progress_bar = findViewById(R.id.progress_bar);
-
+        /**
+         * Toolbar
+         * --
+         */
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        /**
+         * End of Toolbar
+         */
+
+        progress_bar = findViewById(R.id.progress_bar);
 
         recyclerView = (RecyclerView) findViewById(R.id.product_search_list);
         recyclerView.setHasFixedSize(true);
@@ -61,17 +70,16 @@ public class SearchProductActivity extends AppCompatActivity {
 
         recyclerView.setAdapter(searchAdapter);
 
-        final String search_data = getIntent().getStringExtra("search_data");
+        searchKeyword = getIntent().getStringExtra("search_data");
 
         if(products.isEmpty()){
-            Log.d("Acabal","Acabal");
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             progress_bar.setVisibility(View.VISIBLE);
 
 
-            mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("product_name", search_data).whereEqualTo("user_product_type",
-                    Helper.userProductType(Helper.currentUser.getRole())).whereEqualTo("product_status", Product.PRODUCT_STATUS_ENABLE).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("product_name", searchKeyword).whereEqualTo("user_product_type",
+                    Helper.userProductType(Helper.currentUser.getRole())).whereEqualTo("product_status", Product.PRODUCT_STATUS_ENABLE).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -79,17 +87,49 @@ public class SearchProductActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()){
                             products.add(document.toObject(Product.class));
                             products.get(products.size() - 1).setCollection_id(document.getId());
+
+                            mDatabase.collection(GlobalString.USER).document(products.get(products.size() - 1).getUser_id()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+                                private int index;
+
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                    if(task.isSuccessful()){
+                                        DocumentSnapshot document = task.getResult();
+
+                                        User user = (User)document.toObject(User.class);
+
+                                        products.get(index).setUser(user);
+                                        searchAdapter.notifyItemChanged(index);
+
+                                    }
+                                    else{
+
+                                        try{
+                                            throw task.getException();
+                                        }
+                                        catch (Exception ex){
+                                            Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                }
+
+                                private OnCompleteListener<DocumentSnapshot> init(int index){
+                                    this.index = index;
+                                    return this;
+                                }
+
+                            }.init(products.size() - 1));
+
                         }
 
                         if(!products.isEmpty()){
-                            Log.d("ProductsSize", "" + products.size());
-
                             searchAdapter.notifyDataSetChanged();
                         }
                         else{
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.product_search_no_available), Toast.LENGTH_SHORT).show();
                         }
-
 
                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         progress_bar.setVisibility(View.GONE);
@@ -102,8 +142,11 @@ public class SearchProductActivity extends AppCompatActivity {
                         catch (Exception ex){
 
                             progress_bar.setVisibility(View.GONE);
+
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                            Toast.makeText(SearchProductActivity.this, search_data, Toast.LENGTH_SHORT).show();
+
+                            Toast.makeText(ProductsSearchActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+
                         }
                     }
 

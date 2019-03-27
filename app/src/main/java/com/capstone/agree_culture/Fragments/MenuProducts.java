@@ -3,11 +3,9 @@ package com.capstone.agree_culture.Fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,9 +19,11 @@ import android.widget.Toast;
 
 import com.capstone.agree_culture.Adapter.MainMenuProductListsAdapter;
 import com.capstone.agree_culture.Helper.GlobalString;
+import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.ProductsCreationActivity;
 import com.capstone.agree_culture.R;
-import com.capstone.agree_culture.model.Product;
+import com.capstone.agree_culture.Model.Product;
+import com.capstone.agree_culture.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,7 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +69,9 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
     private RecyclerView product_recyclerview;
     private MainMenuProductListsAdapter mAdapter;
 
+
+    private User currentUser;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,6 +87,8 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
         mDatabase = FirebaseFirestore.getInstance();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        currentUser = Helper.currentUser;
 
         float_button = (FloatingActionButton) view.findViewById(R.id.fab);
         product_recyclerview = view.findViewById(R.id.menu_products_list);
@@ -136,14 +140,15 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
             });
         }
 
-
-        float_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), ProductsCreationActivity.class);
-                startActivityForResult(intent, ADD_PRODUCT_ID);
-            }
-        });
+        if(currentUser.getRole().equals(GlobalString.SUPPLIER)){
+            float_button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getActivity(), ProductsCreationActivity.class);
+                    startActivityForResult(intent, ADD_PRODUCT_ID);
+                }
+            });
+        }
 
     }
 

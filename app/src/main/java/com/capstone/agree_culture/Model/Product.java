@@ -1,4 +1,4 @@
-package com.capstone.agree_culture.model;
+package com.capstone.agree_culture.Model;
 
 import java.io.Serializable;
 
@@ -15,6 +15,7 @@ public class Product implements Serializable {
     private String product_status;
     private String user_product_type;
 
+    private User user;
 
     public static final String USER_PRODUCT_TYPE_DISTRIBUTOR = "Distributor";
     public static final String USER_PRODUCT_TYPE_SUPPLIER = "Supplier";
@@ -116,5 +117,13 @@ public class Product implements Serializable {
 
     public void setProduct_status(String product_status) {
         this.product_status = product_status;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

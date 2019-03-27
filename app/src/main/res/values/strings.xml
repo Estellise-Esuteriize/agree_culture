@@ -25,7 +25,9 @@
     <string name="user_exists">Currently there is a user sign in</string>
 
 
+    <!-- Main Menu -->
     <!-- Home Strings -->
+    <string name="search_product_empty">Please input product to search</string>
     <string name="home_login">Login</string>
     <string name="home_logo_cont_description">Home Logo</string>
     <string name="home_search_hint">Search : Rice, Beans, and ETC.</string>
@@ -41,7 +43,7 @@
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
+    <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_up_link">Sign up</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -121,5 +123,6 @@
 
     <!-- product search -->
     <string name="product_search_no_available">No available product</string>
-
+    <string name="product_search_desc_name">%1$s ( %2$s ) \n<b>Phone no. <i>%3$s</i></b></string>
+    <string name="search_product_list_item"><b>PHP :</b> %1$s, \n<b>Product Left : </b>%2$s, \n<b>Minimum Quantity : </b>%3$s</string>
 </resources>

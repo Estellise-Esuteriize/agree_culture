@@ -1,6 +1,5 @@
 package com.capstone.agree_culture.Adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,12 +19,11 @@ import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.ProductsUpdateActivity;
 import com.capstone.agree_culture.R;
-import com.capstone.agree_culture.model.Product;
+import com.capstone.agree_culture.Model.Product;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -73,7 +70,9 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
 
         myViewHolder.product_delete.setOnClickListener(new ProductDelete(product));
 
-        myViewHolder.itemView.setOnClickListener(new ProductUpdate(product));
+        if(Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
+            myViewHolder.itemView.setOnClickListener(new ProductUpdate(product));
+        }
 
 
     }

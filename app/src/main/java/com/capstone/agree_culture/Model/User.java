@@ -1,4 +1,4 @@
-package com.capstone.agree_culture.model;
+package com.capstone.agree_culture.Model;
 
 import java.util.Date;
 

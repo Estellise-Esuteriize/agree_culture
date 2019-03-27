@@ -1,6 +1,6 @@
 package com.capstone.agree_culture.Helper;
 
-import com.capstone.agree_culture.model.User;
+import com.capstone.agree_culture.Model.User;
 
 public class Helper {
 

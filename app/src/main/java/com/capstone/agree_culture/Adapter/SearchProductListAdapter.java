@@ -1,8 +1,8 @@
 package com.capstone.agree_culture.Adapter;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.capstone.agree_culture.R;
-import com.capstone.agree_culture.model.Product;
+import com.capstone.agree_culture.Model.Product;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -37,8 +37,23 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
         Product product = products.get(i);
 
         myViewHolder.product_name.setText(product.getProduct_name());
-        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format
+        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.search_product_list_item, format
                 .format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
+
+
+        final String desc = myViewHolder.product_desc.getText().toString();
+
+        if(desc.isEmpty()){
+            if(product.getUser() != null){
+
+                myViewHolder.product_desc.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.product_search_desc_name,
+                        product.getUser().getFull_name(),
+                        product.getUser().getRole(),
+                        product.getUser().getPhone_number()));
+
+            }
+        }
+
     }
 
     @Override
@@ -49,13 +64,14 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView product_image;
-        public TextView product_name, product_detail;
+        public TextView product_name, product_detail, product_desc;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             product_image = itemView.findViewById(R.id.search_product_list_image);
             product_name = itemView.findViewById(R.id.search_product_list_label);
+            product_desc = itemView.findViewById(R.id.search_product_list_desc);
             product_detail = itemView.findViewById(R.id.search_product_list_detail);
         }
     }
