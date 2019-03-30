@@ -22,6 +22,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,11 +31,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Fragments.MainMenu;
 import com.capstone.agree_culture.Fragments.MenuProducts;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.User;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,6 +50,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
@@ -61,7 +65,8 @@ public class MainActivity extends AppCompatActivity
 
     private FirebaseFirestore mDatabase;
 
-    private FirebaseStorage mStorage;
+    private StorageReference mStorage;
+    private StorageReference mUserPhoto;
 
     private User currentUser;
 
@@ -115,7 +120,7 @@ public class MainActivity extends AppCompatActivity
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseFirestore.getInstance();
 
-        mStorage = FirebaseStorage.getInstance();
+        mStorage = FirebaseStorage.getInstance().getReference();
 
         mUser = mAuth.getCurrentUser();
 
@@ -169,6 +174,11 @@ public class MainActivity extends AppCompatActivity
                         }
 
                         user_photo.setOnClickListener(new ChangePhoto());
+
+                        if(!TextUtils.isEmpty(currentUser.getPhoto())){
+                            Glide.with(getApplicationContext()).load(currentUser.getPhoto()).placeholder(R.drawable.imageview_rectangular).into(user_photo);
+                        }
+
 
                     }
 
@@ -298,38 +308,68 @@ public class MainActivity extends AppCompatActivity
 
             final Uri filePath = data.getData();
 
-            mStorage.getReference().child(GlobalString.USER + UUID.randomUUID().toString()).putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            mUserPhoto = mStorage.child(GlobalString.USER + "/" + UUID.randomUUID().toString());
+            UploadTask uploadTask = mUserPhoto.putFile(filePath);
+
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
 
-                    WriteBatch batch = mDatabase.batch();
-                    DocumentReference ref = mDatabase.collection(GlobalString.USER).document(currentUser.getDocumentId());
-                    batch.update(ref, "photo", taskSnapshot.getMetadata().getName());
+                    if(!task.isSuccessful()){
+                        throw task.getException();
+                    }
 
-                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if(task.isSuccessful()){
-
-                                try {
-                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                                    user_photo.setImageBitmap(bitmap);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-
-                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.home_photo_upload_success), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-
+                    return mUserPhoto.getDownloadUrl();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                public void onComplete(@NonNull Task<Uri> task) {
+
+                    if(task.isSuccessful()){
+
+                        WriteBatch batch = mDatabase.batch();
+                        DocumentReference ref = mDatabase.collection(GlobalString.USER).document(currentUser.getDocumentId());
+
+                        batch.update(ref, "photo", task.getResult().toString());
+                        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+
+                                    try {
+                                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                                        user_photo.setImageBitmap(bitmap);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.home_photo_upload_success), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+                    }
+                    else{
+                        try{
+                            throw task.getException();
+                        }catch (Exception e){
+                            e.getStackTrace();
+                            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+
                 }
             });
+
+
+//            ref.putFile(filePath).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {@Override
+//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//
+//
+//
+//                }
+//            });
 
 
         }

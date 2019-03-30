@@ -5,6 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+
+    <ImageView
+        android:id="@+id/user_photo"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/nav_header_desc"
+        android:background="@drawable/imageview_rectangular"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="35dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_add_photo_alternate" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
