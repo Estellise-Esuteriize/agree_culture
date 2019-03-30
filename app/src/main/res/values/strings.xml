@@ -5,6 +5,7 @@
 
     <string name="product">Product</string>
     <string name="confirm">Confirm</string>
+
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
 
@@ -38,6 +39,13 @@
     <string name="home_button_cont_dist">Distributor</string>
     <string name="home_button_cont_sell">Supplier</string>
     <string name="title_activity_login">Sign in</string>
+
+    <!-- Home Alert Dialog -->
+    <string name="home_photo_title">Photo</string>
+    <string name="home_photo_message">Add/Change profile photo?</string>
+
+    <!-- Home User Photo Related -->
+    <string name="home_photo_upload_success">Successfully added/updated photo</string>
 
     <!-- Drawer Layout -->
     <string name="home_full_name">%1$s ( %2$s )</string>

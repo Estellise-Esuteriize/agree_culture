@@ -130,12 +130,13 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
         @Override
         public void onClick(View v) {
 
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
 
-            Uri uri = Uri.parse(String.format("smsto:%s", user.getPhone_number()));
+            intent.setData(Uri.parse("smsto:" + user.getPhone_number()));
 
-            Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
-            intent.setPackage("com.google.android.apps.messaging");
+            ((Activity)context).startActivityForResult(intent, SMS_MESSAGE);
 
+            /**
             if (intent.resolveActivity(context.getPackageManager()) != null) {
                 ((Activity)context).startActivityForResult(intent, SMS_MESSAGE);
             }
@@ -143,7 +144,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 // Display error message to say Google Android SMS APP required.
                 Toast.makeText(context, context.getResources().getString(R.string.cart_add_error), Toast.LENGTH_SHORT ).show();
             }
-
+             */
 
         }
     }

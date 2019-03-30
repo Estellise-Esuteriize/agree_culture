@@ -11,6 +11,7 @@ public class User {
     private String address;
     private String city;
     private String phone_number;
+    private String photo;
     private Date created_at;
 
     public User(){}
@@ -22,6 +23,7 @@ public class User {
         this.city = city;
         this.phone_number = phone_number;
         this.created_at = created_at;
+
     }
 
     public String getFull_name() {
@@ -78,5 +80,13 @@ public class User {
 
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

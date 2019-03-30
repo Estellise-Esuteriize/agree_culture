@@ -12,4 +12,14 @@ public class GlobalString {
 
     public static String CART = "cart";
 
+
+    /**
+     * Firebase Storage Folders
+     *  - user photo's
+     *      USER - variable
+     *  - products photo
+     */
+
+
+
 }

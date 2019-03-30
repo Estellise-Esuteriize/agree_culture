@@ -1,33 +1,56 @@
 package com.capstone.agree_culture;
 
+import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.capstone.agree_culture.Fragments.MainMenu;
 import com.capstone.agree_culture.Fragments.MenuProducts;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.IOException;
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,6 +60,8 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser mUser = null;
 
     private FirebaseFirestore mDatabase;
+
+    private FirebaseStorage mStorage;
 
     private User currentUser;
 
@@ -67,6 +92,9 @@ public class MainActivity extends AppCompatActivity
 
     private final static String USERS = "users";
 
+    private final static int USER_PHOTO = 1012;
+    private final static int PERMISSION_USER_PHOTO = 1013;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +102,7 @@ public class MainActivity extends AppCompatActivity
 
         cont = this;
 
-        if(!Helper.isFirestoreSettingsInitialize){
+        if (!Helper.isFirestoreSettingsInitialize) {
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setTimestampsInSnapshotsEnabled(true)
                     .build();
@@ -86,6 +114,8 @@ public class MainActivity extends AppCompatActivity
 
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseFirestore.getInstance();
+
+        mStorage = FirebaseStorage.getInstance();
 
         mUser = mAuth.getCurrentUser();
 
@@ -114,8 +144,7 @@ public class MainActivity extends AppCompatActivity
         fragment_transaction.commit();
 
 
-
-        if(mUser != null){
+        if (mUser != null) {
 
             invalidateOptionsMenu();
 
@@ -126,14 +155,21 @@ public class MainActivity extends AppCompatActivity
                     currentUser = documentSnapshot.toObject(User.class);
                     currentUser.setDocumentId(mUser.getUid());
 
-                    if(currentUser != null){
+                    if (currentUser != null) {
 
                         Helper.currentUser = currentUser;
 
-                        if(currentUser.getRole().equals(GlobalString.CUSTOMER)){
+                        if (currentUser.getRole().equals(GlobalString.CUSTOMER)) {
                             menu.findItem(R.id.nav_products).setVisible(false);
                             menu.findItem(R.id.nav_orders).setVisible(false);
+                        } else if (currentUser.getRole().equals(GlobalString.DISTRIBUTOR)) {
+
+                        } else if (currentUser.getRole().equals(GlobalString.SUPPLIER)) {
+                            menu.findItem(R.id.nav_my_cart).setVisible(false);
                         }
+
+                        user_photo.setOnClickListener(new ChangePhoto());
+
                     }
 
                     main_menu.initializedHome(currentUser);
@@ -144,8 +180,7 @@ public class MainActivity extends AppCompatActivity
 
                 }
             });
-        }
-        else{
+        } else {
             menu.findItem(R.id.nav_products).setVisible(false);
             menu.findItem(R.id.nav_messages).setVisible(false);
             menu.findItem(R.id.nav_my_cart).setVisible(false);
@@ -169,7 +204,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-        if(mUser == null){
+        if (mUser == null) {
             getMenuInflater().inflate(R.menu.main, menu);
         }
         return true;
@@ -207,7 +242,7 @@ public class MainActivity extends AppCompatActivity
             fragment_transaction.commit();
 
         } else if (id == R.id.nav_products) {
-            if(mUser != null){
+            if (mUser != null) {
                 fragment_transaction = getSupportFragmentManager().beginTransaction();
                 fragment_transaction.replace(fragment, menu_products);
                 fragment_transaction.commit();
@@ -216,7 +251,7 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_logout) {
 
-            if(mUser != null){
+            if (mUser != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Logout");
                 builder.setMessage("Continue Logout?");
@@ -230,7 +265,7 @@ public class MainActivity extends AppCompatActivity
                         startActivity(intent);
 
                     }
-                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener(){
+                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -243,9 +278,116 @@ public class MainActivity extends AppCompatActivity
         }
 
 
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    private void requestPhoto(){
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, USER_PHOTO);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if(requestCode == USER_PHOTO && resultCode == RESULT_OK && data.getData() != null){
+            Log.d("USER_PHOTO", "Result is okay");
+
+            final Uri filePath = data.getData();
+
+            mStorage.getReference().child(GlobalString.USER + UUID.randomUUID().toString()).putFile(filePath).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    WriteBatch batch = mDatabase.batch();
+                    DocumentReference ref = mDatabase.collection(GlobalString.USER).document(currentUser.getDocumentId());
+                    batch.update(ref, "photo", taskSnapshot.getMetadata().getName());
+
+                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+
+                                try {
+                                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                                    user_photo.setImageBitmap(bitmap);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                                Toast.makeText(getApplicationContext(), getResources().getString(R.string.home_photo_upload_success), Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode){
+            case PERMISSION_USER_PHOTO:
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    requestPhoto();
+                }
+                break;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
+    class ChangePhoto implements View.OnClickListener {
+
+
+        @Override
+        public void onClick(View v) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(cont);
+            builder.setTitle(getResources().getString(R.string.home_photo_title));
+            builder.setMessage(getResources().getString(R.string.home_photo_message));
+            builder.setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_USER_PHOTO);
+                        }else{
+                            requestPhoto();
+                        }
+                    } else {
+                        requestPhoto();
+                    }
+
+                }
+
+            }).setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            builder.create().show();
+
+        }
+
+    }
+
 }
