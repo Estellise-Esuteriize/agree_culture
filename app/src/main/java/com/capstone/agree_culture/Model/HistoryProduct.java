@@ -2,7 +2,7 @@ package com.capstone.agree_culture.Model;
 
 import java.util.Date;
 
-public class History {
+public class HistoryProduct {
 
     private String collectionId;
 
@@ -24,11 +24,11 @@ public class History {
 
 
 
-    History(){
+    HistoryProduct(){
 
     }
 
-    History(String ownerUidRef, String buyerUidRef, String productName, String productQuantity, String productPrice, String status){
+    HistoryProduct(String ownerUidRef, String buyerUidRef, String productName, String productQuantity, String productPrice, String status){
         this.ownerUidRef = ownerUidRef;
         this.buyerUidRef = buyerUidRef;
         this.productName = productName;
