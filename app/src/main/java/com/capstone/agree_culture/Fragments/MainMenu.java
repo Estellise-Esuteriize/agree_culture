@@ -18,6 +18,8 @@ import com.capstone.agree_culture.R;
 import com.capstone.agree_culture.ProductsSearchActivity;
 import com.capstone.agree_culture.Model.User;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 public class MainMenu extends Fragment {
 
 
@@ -130,7 +132,7 @@ public class MainMenu extends Fragment {
         @Override
         public void onClick(View v) {
 
-            final String search_box = home_search.getText().toString();
+            final String search_box = WordUtils.capitalizeFully(home_search.getText().toString());
             if(search_box.isEmpty()){
                 Toast.makeText(getActivity().getApplicationContext(), getActivity().getResources().getString(R.string.search_product_empty), Toast.LENGTH_SHORT).show();
             }else{

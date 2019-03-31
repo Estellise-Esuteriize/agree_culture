@@ -116,6 +116,7 @@
     <!-- Create Product Error -->
     <string name="product_create_name_error">Product name is required</string>
     <string name="product_create_number_error">%1$s must not be lesser than or equal to zero</string>
+    <string name="product_create_product_photo_error">Product photo is required</string>
 
     <!-- Update Product -->
     <string name="product_update_disable">Disable</string>

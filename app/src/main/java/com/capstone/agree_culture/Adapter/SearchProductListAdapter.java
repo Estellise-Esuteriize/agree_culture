@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Cart;
@@ -82,6 +84,10 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                         product.getUser().getPhone_number()));
 
             }
+        }
+
+        if(!TextUtils.isEmpty(product.getProductPhoto())){
+            Glide.with(context).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(myViewHolder.product_image);
         }
 
 

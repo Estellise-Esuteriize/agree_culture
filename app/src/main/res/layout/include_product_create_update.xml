@@ -7,7 +7,7 @@
 
 
     <ImageView
-        android:id="@+id/user_photo"
+        android:id="@+id/product_create_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:contentDescription="@string/nav_header_desc"

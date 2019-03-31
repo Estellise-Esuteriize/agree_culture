@@ -12,13 +12,14 @@
 
 
     <android.support.v7.widget.AppCompatImageView
+        android:background="@drawable/imageview_rectangular"
+        android:src="@drawable/ic_add_photo_alternate"
         android:id="@+id/main_menu_product_list_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@mipmap/ic_launcher_round"
         android:layout_width="@dimen/main_menu_product_list"
-        android:layout_height="match_parent" />
+        android:layout_height="@dimen/main_menu_product_list" />
 
 
     <LinearLayout

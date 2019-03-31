@@ -12,8 +12,10 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Product;
@@ -46,9 +48,12 @@ public class ProductsUpdateActivity extends AppCompatActivity {
      *  - price of product
      *  - quantity of product
      *  - minimum purchase for product
+     * ImageView
+     *  - productPhoto
+     *      - the photo of the product
      */
     private EditText product_name, product_price, product_quantity, product_minimum;
-
+    private ImageView productPhoto;
     /**
      * variables from previous activity
      *  - product
@@ -100,6 +105,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
         product_price = (EditText) findViewById(R.id.product_create_price);
         product_quantity = (EditText) findViewById(R.id.product_create_quantity);
         product_minimum = (EditText) findViewById(R.id.product_create_minimum);
+        productPhoto = (ImageView) findViewById(R.id.product_create_image);
 
         progress_bar = findViewById(R.id.progress_bar);
 
@@ -139,6 +145,8 @@ public class ProductsUpdateActivity extends AppCompatActivity {
         product_price.setText(format.format(product.getProduct_price()));
         product_quantity.setText(product.getProduct_quantity().toString());
         product_minimum.setText(product.getProduct_minimum().toString());
+
+        Glide.with(this).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(productPhoto);
 
 
         enable.setOnClickListener(new EnableProduct());

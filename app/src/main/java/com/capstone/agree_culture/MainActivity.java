@@ -363,14 +363,6 @@ public class MainActivity extends AppCompatActivity
             });
 
 
-//            ref.putFile(filePath).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {@Override
-//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-//
-//
-//
-//                }
-//            });
-
 
         }
 

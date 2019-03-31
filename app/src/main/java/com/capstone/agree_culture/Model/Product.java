@@ -21,6 +21,7 @@ public class Product implements Serializable {
     private Integer product_quantity;
     private Integer product_minimum;
     private String product_status;
+    private String productPhoto;
     private String user_product_type;
 
     private User user;
@@ -133,5 +134,13 @@ public class Product implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getProductPhoto() {
+        return productPhoto;
+    }
+
+    public void setProductPhoto(String productPhoto) {
+        this.productPhoto = productPhoto;
     }
 }
