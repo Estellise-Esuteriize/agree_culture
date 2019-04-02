@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,21 +20,22 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
-import com.capstone.agree_culture.Model.Cart;
+import com.capstone.agree_culture.Model.Messages;
+import com.capstone.agree_culture.Model.Orders;
 import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.R;
 import com.capstone.agree_culture.Model.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Timestamp;
-import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.text.DecimalFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProductListAdapter.MyViewHolder> {
@@ -95,7 +95,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
         myViewHolder.cart.setOnClickListener(null);
 
         myViewHolder.cart.setOnClickListener(new CartProduct(product));
-        myViewHolder.message.setOnClickListener(new Message(product.getUser()));
+        myViewHolder.message.setOnClickListener(new Message(product));
 
     }
 
@@ -127,10 +127,16 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
 
     class Message implements View.OnClickListener{
 
+        Product product;
+
         User user;
 
-        Message(User user){
-            this.user = user;
+        User currentUser;
+
+        Message(Product product) {
+            this.product = product;
+            this.user = this.product.getUser();
+            currentUser = Helper.currentUser;
         }
 
         @Override
@@ -141,6 +147,26 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
             intent.setData(Uri.parse("smsto:" + user.getPhone_number()));
 
             ((Activity)context).startActivityForResult(intent, SMS_MESSAGE);
+
+
+            final Messages message = new Messages(currentUser.getDocumentId(), user.getDocumentId(), user.getPhone_number());
+
+            mDatabase.collection(GlobalString.MESSAGES).whereEqualTo("userUidRef", currentUser.getDocumentId()).whereEqualTo("toUserUidRef", user.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+
+                    if(task.isSuccessful()){
+                        if(task.getResult().isEmpty()){
+                            List<String> products = new ArrayList<>();
+                            products.add(product.getProduct_name());
+
+                            mDatabase.collection(GlobalString.MESSAGES).add(message);
+                        }
+                    }
+
+                }
+            });
 
             /**
             if (intent.resolveActivity(context.getPackageManager()) != null) {
@@ -180,7 +206,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 quantity = product.getProduct_quantity();
             }
 
-            final Cart cart = new Cart(product.getProduct_name(), quantity, product.getProduct_price(), product.getCollection_id(), product.getUser_id(), Helper.currentUser.getDocumentId());
+            final Orders orders = new Orders(product.getProduct_name(), quantity, product.getProduct_price(), product.getCollection_id(), product.getUser_id(), Helper.currentUser.getDocumentId());
 
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -192,13 +218,13 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    mDatabase.collection(GlobalString.CART).whereEqualTo("ownerUidRef", cart.getOwnerUidRef()).whereEqualTo("buyerUidRef", cart.getBuyerUidRef()).whereEqualTo("productUidRef", cart.getProductUidRef()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    mDatabase.collection(GlobalString.ORDERS).whereEqualTo("ownerUidRef", orders.getOwnerUidRef()).whereEqualTo("buyerUidRef", orders.getBuyerUidRef()).whereEqualTo("productUidRef", orders.getProductUidRef()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
                             if(queryDocumentSnapshots.isEmpty()){
 
-                                mDatabase.collection(GlobalString.CART).document().set(cart).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                mDatabase.collection(GlobalString.ORDERS).document().set(orders).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 

@@ -1,10 +1,8 @@
 package com.capstone.agree_culture.Model;
 
-import com.google.firebase.firestore.FieldValue;
-
 import java.util.Date;
 
-public class Cart {
+public class Orders {
 
 
     private String collectionId;
@@ -17,27 +15,31 @@ public class Cart {
     private String ownerUidRef;
 
     private String buyerUidRef;
-    private String buyerStatus;
+    private String status;
 
-    private Date createdAt;
-    private Date updatedAt;
+    private String createdAt;
+    private String updatedAt;
 
-    public static final String cart = "Cart";
-    public static final String purchase = "Purchase";
+    public static final String CART = "Orders";
+    public static final String ORDER = "Order";
+    public static final String PENDING = "Pending";
+    public static final String DELIVERY = "Delivery";
+    public static final String COMPLETED = "Completed";
+    public static final String CANCELED = "Canceled";
 
 
-    public Cart(){
+    public Orders(){
 
     }
 
-    public Cart(String productName, int productQuantity, double productPrice, String productUidRef, String ownerUidRef, String buyerUidRef){
+    public Orders(String productName, int productQuantity, double productPrice, String productUidRef, String ownerUidRef, String buyerUidRef){
         this.productName = productName;
         this.productQuantity = productQuantity;
         this.productPrice = productPrice;
         this.productUidRef = productUidRef;
         this.ownerUidRef = ownerUidRef;
         this.buyerUidRef = buyerUidRef;
-        this.buyerStatus = cart;
+        this.status = CART;
     }
 
 
@@ -97,27 +99,27 @@ public class Cart {
         this.buyerUidRef = buyerUidRef;
     }
 
-    public String getBuyerStatus() {
-        return buyerStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setBuyerStatus(String buyerStatus) {
-        this.buyerStatus = buyerStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public Date getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Date getUpdatedAt() {
+    public String getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Date updatedAt) {
+    public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

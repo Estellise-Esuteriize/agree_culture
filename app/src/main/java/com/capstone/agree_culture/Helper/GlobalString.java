@@ -6,12 +6,19 @@ public class GlobalString {
     public static String DISTRIBUTOR = "Distributor";
     public static String CUSTOMER = "Customer";
 
+
+    /**
+     * Firebase Firestore
+     *  - collection names
+     *      - users
+     *      - products
+     *      - orders
+     *      - messages
+     */
     public static String USER = "users";
-
     public static String PRODUCTS = "products";
-
-    public static String CART = "cart";
-
+    public static String ORDERS = "orders";
+    public static String MESSAGES = "messages";
 
     /**
      * Firebase Storage Folders
