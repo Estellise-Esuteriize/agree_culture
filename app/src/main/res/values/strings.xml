@@ -54,6 +54,10 @@
         </font>
     </string>
 
+    <!-- Main Menu -->
+    <!-- Cart -->
+    <string name="menu_cart_order">Order</string>
+
     <!-- Home Alert Dialog -->
     <string name="home_photo_title">Photo</string>
     <string name="home_photo_message">Add/Change profile photo?</string>
