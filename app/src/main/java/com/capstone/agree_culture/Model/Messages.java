@@ -15,7 +15,6 @@ public class Messages {
 
     private String userUidRef;
 
-
     private String toUserUidRef;
     private String toUserNumber;
 

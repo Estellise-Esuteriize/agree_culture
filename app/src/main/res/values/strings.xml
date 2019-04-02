@@ -48,11 +48,9 @@
                 %1$s
             </b>
         </font>
+        \n
         <font size="16">
             %2$s
-        </font>
-        <font size="14">
-            %3$s
         </font>
     </string>
 

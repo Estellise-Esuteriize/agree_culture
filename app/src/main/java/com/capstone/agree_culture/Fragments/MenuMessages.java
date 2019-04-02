@@ -10,13 +10,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.capstone.agree_culture.Adapter.MenuMessagesListAdapter;
+import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Messages;
 import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,12 +75,51 @@ public class MenuMessages extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 
+
         if(messages.isEmpty()){
 
 
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+            progressBar.setVisibility(View.VISIBLE);
+
+            mDatabase.collection(GlobalString.MESSAGES).whereEqualTo("userUidRef", currentUser.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    progressBar.setVisibility(View.GONE);
+
+                    if(task.isSuccessful()){
+
+                        for(DocumentSnapshot item : task.getResult()){
+                            Messages message = item.toObject(Messages.class);
+                            messages.add(0, message);
+                            mAdapter.notifyItemRangeInserted(messages.size() - 1, messages.size());
+                        }
+
+                    }
+                    else{
+                        try {
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                }
+            });
 
         }
         else{
+
+            for(Messages message : Helper.newMessage){
+
+                messages.add(0, message);
+                mAdapter.notifyItemRangeInserted(messages.size() - 1, messages.size());
+
+            }
 
         }
 

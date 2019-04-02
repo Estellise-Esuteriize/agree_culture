@@ -154,14 +154,12 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
             mDatabase.collection(GlobalString.MESSAGES).whereEqualTo("userUidRef", currentUser.getDocumentId()).whereEqualTo("toUserUidRef", user.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-
                     if(task.isSuccessful()){
                         if(task.getResult().isEmpty()){
-                            List<String> products = new ArrayList<>();
-                            products.add(product.getProduct_name());
-
                             mDatabase.collection(GlobalString.MESSAGES).add(message);
+
+                            Helper.addNewMessages(message);
+
                         }
                     }
 

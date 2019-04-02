@@ -16,7 +16,7 @@ public class Helper {
 
     public static List<Orders> newOrders;
 
-    public static List<Messages> newMessage;
+    public static List<Messages> newMessage = null;
 
 
     public static String userProductType(String user_product_type){
@@ -33,6 +33,15 @@ public class Helper {
 
         return null;
 
+    }
+
+    public static void addNewMessages(Messages messages){
+
+        if(newMessage == null){
+            newMessage = new ArrayList<>();
+        }
+
+        newMessage.add(messages);
     }
 
 
