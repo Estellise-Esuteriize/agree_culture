@@ -57,6 +57,12 @@
     <!-- Main Menu -->
     <!-- Cart -->
     <string name="menu_cart_order">Order</string>
+    <string name="menu_cart_desc">
+        Quantity : %1$s\n
+        Price : %2$s\n
+        Total : %3$s
+    </string>
+
 
     <!-- Home Alert Dialog -->
     <string name="home_photo_title">Photo</string>

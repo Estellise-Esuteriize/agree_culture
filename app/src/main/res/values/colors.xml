@@ -9,4 +9,11 @@
 
     <!-- warning color -->
     <color name="color_warning">#e84e2c</color>
+
+    <!-- Order Colors -->
+    <color name="order_pending">#01CDFF</color>
+    <color name="order_ordered">#0171FF</color>
+    <color name="order_delivery">#10B769</color>
+    <color name="order_success">#48EC1C</color>
+    <color name="order_canceled">#FA5C2A</color>
 </resources>

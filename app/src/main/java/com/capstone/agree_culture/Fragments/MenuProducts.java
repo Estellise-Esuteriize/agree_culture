@@ -113,7 +113,7 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
                     if(task.isComplete()){
                         for (QueryDocumentSnapshot document : task.getResult()){
                             products.add(document.toObject(Product.class));
-                            products.get(products.size() - 1).setCollection_id(document.getId());
+                            products.get(products.size() - 1).setCollectionId(document.getId());
                         }
 
                         Log.d("ProductsSize", "" + products.size());

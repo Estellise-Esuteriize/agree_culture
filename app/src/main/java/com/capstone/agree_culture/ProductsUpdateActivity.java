@@ -116,12 +116,12 @@ public class ProductsUpdateActivity extends AppCompatActivity {
             product_quantity.setEnabled(false);
         }
 
-        if(product.getProduct_status().equals(Product.PRODUCT_STATUS_ENABLE)){
+        if(product.getProductStatus().equals(Product.PRODUCT_STATUS_ENABLE)){
             enable.getBackground().setAlpha(64);
             enable.setEnabled(false);
             disable.setEnabled(true);
         }
-        else if(product.getProduct_status().equals(Product.PRODUCT_STATUS_DISABLED)){
+        else if(product.getProductStatus().equals(Product.PRODUCT_STATUS_DISABLED)){
             disable.getBackground().setAlpha(64);
             disable.setEnabled(false);
             enable.setEnabled(true);
@@ -141,10 +141,10 @@ public class ProductsUpdateActivity extends AppCompatActivity {
 
         DecimalFormat format = new DecimalFormat("#,###,###");
 
-        product_name.setText(product.getProduct_name());
-        product_price.setText(format.format(product.getProduct_price()));
-        product_quantity.setText(product.getProduct_quantity().toString());
-        product_minimum.setText(product.getProduct_minimum().toString());
+        product_name.setText(product.getProductName());
+        product_price.setText(format.format(product.getProductPrice()));
+        product_quantity.setText(product.getProductQuantity().toString());
+        product_minimum.setText(product.getProductMinimum().toString());
 
         Glide.with(this).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(productPhoto);
 
@@ -169,7 +169,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             WriteBatch batch = mDatabase.batch();
-            DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollection_id());
+            DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollectionId());
 
             final String prod_name;
             final double prod_price;
@@ -229,10 +229,10 @@ public class ProductsUpdateActivity extends AppCompatActivity {
                             progress_bar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), getResources().getString(R.string.product_update_success), Toast.LENGTH_SHORT).show();
 
-                            product.setProduct_name(prod_name);
-                            product.setProduct_price(prod_price);
-                            product.setProduct_quantity(prod_quantity);
-                            product.setProduct_minimum(prod_minimum);
+                            product.setProductName(prod_name);
+                            product.setProductPrice(prod_price);
+                            product.setProductQuantity(prod_quantity);
+                            product.setProductMinimum(prod_minimum);
 
                             Intent intent = new Intent();
                             intent.putExtra("product", product);
@@ -264,7 +264,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
         public void onClick(View v) {
             WriteBatch batch = mDatabase.batch();
 
-            DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollection_id());
+            DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollectionId());
             batch.update(ref, "product_status", Product.PRODUCT_STATUS_ENABLE);
 
             batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -309,7 +309,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
         public void onClick(View v) {
             WriteBatch batch = mDatabase.batch();
 
-            DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollection_id());
+            DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollectionId());
             batch.update(ref, "product_status", Product.PRODUCT_STATUS_DISABLED);
 
             batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {

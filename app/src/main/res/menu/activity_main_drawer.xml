@@ -6,23 +6,23 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_home"
             android:title="Home" />
         <item
             android:id="@+id/nav_products"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_product"
             android:title="Products" />
         <item
             android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_message_home"
             android:title="@string/nav_messages"/>
         <item
             android:id="@+id/nav_my_cart"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_shopping_cart"
             android:title="@string/nav_my_cart"/>
         <item
             android:id="@+id/nav_orders"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_shopping_cart"
             android:title="@string/nav_orders" />
         <!--<item-->
             <!--android:id="@+id/nav_slideshow"-->
@@ -36,13 +36,13 @@
 
     <item android:title="Application Settings">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+            <!--<item-->
+                <!--android:id="@+id/nav_share"-->
+                <!--android:icon="@drawable/ic_menu_share"-->
+                <!--android:title="Share" />-->
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_slideshow"
+                android:icon="@drawable/ic_logout"
                 android:title="Logout" />
         </menu>
     </item>

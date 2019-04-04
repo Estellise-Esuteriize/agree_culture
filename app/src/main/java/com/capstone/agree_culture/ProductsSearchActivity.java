@@ -2,7 +2,6 @@ package com.capstone.agree_culture;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -94,9 +93,9 @@ public class ProductsSearchActivity extends AppCompatActivity {
                     if(task.isComplete()){
                         for (QueryDocumentSnapshot document : task.getResult()){
                             products.add(document.toObject(Product.class));
-                            products.get(products.size() - 1).setCollection_id(document.getId());
+                            products.get(products.size() - 1).setCollectionId(document.getId());
 
-                            mDatabase.collection(GlobalString.USER).document(products.get(products.size() - 1).getUser_id()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            mDatabase.collection(GlobalString.USER).document(products.get(products.size() - 1).getUserId()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
 
                                 private int index;
 

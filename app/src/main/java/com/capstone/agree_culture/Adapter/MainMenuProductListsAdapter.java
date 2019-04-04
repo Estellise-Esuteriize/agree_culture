@@ -66,10 +66,10 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         Product product = products.get(i);
 
-        myViewHolder.product_label.setText(product.getProduct_name());
+        myViewHolder.product_label.setText(product.getProductName());
         myViewHolder.product_desc.setText("----------");
 
-        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
+        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(product.getProductPrice()), product.getProductQuantity().toString(), product.getProductMinimum().toString()));
 
         myViewHolder.product_delete.setOnClickListener(new ProductDelete(product));
 
@@ -153,7 +153,7 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollection_id()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollectionId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             onProduct.onDelete(product);

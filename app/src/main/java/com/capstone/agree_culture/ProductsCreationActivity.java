@@ -6,21 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,12 +35,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
-import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -254,7 +248,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<DocumentReference> task) {
 
                                 if (task.isComplete()) {
-                                    product.setCollection_id(task.getResult().getId());
+                                    product.setCollectionId(task.getResult().getId());
 
                                     Intent intent = new Intent();
                                     intent.putExtra("product", product);

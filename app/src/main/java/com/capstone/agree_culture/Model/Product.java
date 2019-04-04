@@ -1,28 +1,22 @@
 package com.capstone.agree_culture.Model;
 
-import android.text.TextUtils;
-
-import com.google.android.gms.flags.impl.DataUtils;
-
 import org.apache.commons.lang3.text.WordUtils;
 
 import java.io.Serializable;
 
-import io.opencensus.internal.StringUtil;
-
 public class Product implements Serializable {
 
 
-    private String collection_id;
+    private String collectionId;
 
-    private String user_id;
-    private String product_name;
-    private Double product_price;
-    private Integer product_quantity;
-    private Integer product_minimum;
-    private String product_status;
+    private String userId;
+    private String productName;
+    private Double productPrice;
+    private Integer productQuantity;
+    private Integer productMinimum;
+    private String productStatus;
     private String productPhoto;
-    private String user_product_type;
+    private String userProductType;
 
     private User user;
 
@@ -36,14 +30,14 @@ public class Product implements Serializable {
 
     }
 
-    public Product(String user_id, String product_name, Double product_price, Integer product_quantity, Integer product_minimum, String user_product_type){
-        this.user_id = user_id;
-        this.product_name = WordUtils.capitalizeFully(product_name);
-        this.product_price = product_price;
-        this.product_quantity = product_quantity;
-        this.product_minimum = product_minimum;
-        this.user_product_type = user_product_type;
-        this.product_status = PRODUCT_STATUS_ENABLE;
+    public Product(String userId, String productName, Double productPrice, Integer productQuantity, Integer productMinimum, String userProductType){
+        this.userId = userId;
+        this.productName = WordUtils.capitalizeFully(productName);
+        this.productPrice = productPrice;
+        this.productQuantity = productQuantity;
+        this.productMinimum = productMinimum;
+        this.userProductType = userProductType;
+        this.productStatus = PRODUCT_STATUS_ENABLE;
     }
 
     public static boolean productStatus(String status){
@@ -61,71 +55,71 @@ public class Product implements Serializable {
 
 
     public String toString(){
-        return "Name : " + product_name + " , " + "Price : " + product_price;
+        return "Name : " + productName + " , " + "Price : " + productPrice;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getProduct_name() {
-        return product_name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    public Double getProduct_price() {
-        return product_price;
+    public Double getProductPrice() {
+        return productPrice;
     }
 
-    public void setProduct_price(Double product_price) {
-        this.product_price = product_price;
+    public void setProductPrice(Double productPrice) {
+        this.productPrice = productPrice;
     }
 
-    public Integer getProduct_quantity() {
-        return product_quantity;
+    public Integer getProductQuantity() {
+        return productQuantity;
     }
 
-    public void setProduct_quantity(Integer product_quantity) {
-        this.product_quantity = product_quantity;
+    public void setProductQuantity(Integer productQuantity) {
+        this.productQuantity = productQuantity;
     }
 
-    public Integer getProduct_minimum() {
-        return product_minimum;
+    public Integer getProductMinimum() {
+        return productMinimum;
     }
 
-    public void setProduct_minimum(Integer product_minimum) {
-        this.product_minimum = product_minimum;
+    public void setProductMinimum(Integer productMinimum) {
+        this.productMinimum = productMinimum;
     }
 
-    public String getCollection_id() {
-        return collection_id;
+    public String getCollectionId() {
+        return collectionId;
     }
 
-    public void setCollection_id(String collection_id) {
-        this.collection_id = collection_id;
+    public void setCollectionId(String collectionId) {
+        this.collectionId = collectionId;
     }
 
-    public String getUser_product_type() {
-        return user_product_type;
+    public String getUserProductType() {
+        return userProductType;
     }
 
-    public void setUser_product_type(String user_product_type) {
-        this.user_product_type = user_product_type;
+    public void setUserProductType(String userProductType) {
+        this.userProductType = userProductType;
     }
 
-    public String getProduct_status() {
-        return product_status;
+    public String getProductStatus() {
+        return productStatus;
     }
 
-    public void setProduct_status(String product_status) {
-        this.product_status = product_status;
+    public void setProductStatus(String productStatus) {
+        this.productStatus = productStatus;
     }
 
     public User getUser() {

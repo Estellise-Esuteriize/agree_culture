@@ -28,14 +28,10 @@ import com.capstone.agree_culture.Model.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.WriteBatch;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProductListAdapter.MyViewHolder> {
@@ -68,9 +64,9 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         Product product = products.get(i);
 
-        myViewHolder.product_name.setText(product.getProduct_name());
+        myViewHolder.product_name.setText(product.getProductName());
         myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.search_product_list_item, format
-                .format(product.getProduct_price()), product.getProduct_quantity().toString(), product.getProduct_minimum().toString()));
+                .format(product.getProductPrice()), product.getProductQuantity().toString(), product.getProductMinimum().toString()));
 
 
         final String desc = myViewHolder.product_desc.getText().toString();
@@ -192,19 +188,19 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
         public void onClick(View v) {
 
 
-            if(product.getProduct_quantity() <= 0){
+            if(product.getProductQuantity() <= 0){
                 Toast.makeText(context, context.getResources().getString(R.string.cart_add_quantity_zero), Toast.LENGTH_LONG).show();
 
                 return;
             }
 
-            int quantity = product.getProduct_minimum();
+            int quantity = product.getProductMinimum();
 
-            if(quantity > product.getProduct_quantity()){
-                quantity = product.getProduct_quantity();
+            if(quantity > product.getProductQuantity()){
+                quantity = product.getProductQuantity();
             }
 
-            final Orders orders = new Orders(product.getProduct_name(), quantity, product.getProduct_price(), product.getCollection_id(), product.getUser_id(), Helper.currentUser.getDocumentId());
+            final Orders orders = new Orders(product.getCollectionId(), product.getUserId(), Helper.currentUser.getDocumentId());
 
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
@@ -216,7 +212,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    mDatabase.collection(GlobalString.ORDERS).whereEqualTo("ownerUidRef", orders.getOwnerUidRef()).whereEqualTo("buyerUidRef", orders.getBuyerUidRef()).whereEqualTo("productUidRef", orders.getProductUidRef()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    mDatabase.collection(GlobalString.ORDERS).whereEqualTo("ownerUidRef", orders.getProductOwnerUidRef()).whereEqualTo("buyerUidRef", orders.getProductBuyerUidRef()).whereEqualTo("productUidRef", orders.getProductUidRef()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 

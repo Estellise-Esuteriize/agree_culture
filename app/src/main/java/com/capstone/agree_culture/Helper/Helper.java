@@ -3,6 +3,7 @@ package com.capstone.agree_culture.Helper;
 import com.capstone.agree_culture.Model.Messages;
 import com.capstone.agree_culture.Model.Orders;
 import com.capstone.agree_culture.Model.User;
+import com.capstone.agree_culture.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,29 @@ public class Helper {
         newMessage.add(messages);
     }
 
+
+
+    public static int orderStatusColors(String status){
+
+        if(status.equals(Orders.PENDING)){
+            return R.color.order_pending;
+        }
+        else if(status.equals(Orders.ORDER)){
+            return R.color.order_ordered;
+        }
+        else if(status.equals(Orders.DELIVERY)){
+            return R.color.order_delivery;
+        }
+        else if(status.equals(Orders.COMPLETED)){
+            return R.color.order_success;
+        }
+        else if(status.equals(Orders.CANCELED)){
+            return R.color.order_canceled;
+        }
+
+        return R.color.order_canceled;
+
+    }
 
 
 }
