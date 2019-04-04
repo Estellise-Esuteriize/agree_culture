@@ -40,7 +40,7 @@
         android:id="@+id/menu_order_user_name"
         android:text="@string/app_name"
         app:layout_constraintStart_toEndOf="@id/menu_order_photo"
-        app:layout_constraintTop_toBottomOf="@id/menu_order_status"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/menu_cart_addition"
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
