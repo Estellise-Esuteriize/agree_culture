@@ -66,7 +66,6 @@
     <string name="menu_car_product_plus_limit">Quantity cannot be zero or more than the product left</string>
 
 
-
     <!-- Home Alert Dialog -->
     <string name="home_photo_title">Photo</string>
     <string name="home_photo_message">Add/Change profile photo?</string>
@@ -173,7 +172,7 @@
     <!-- add to orders error -->
     <string name="cart_add_error">Error accessing messaging app</string>
     <string name="cart_add_product_exists">Product already added to orders</string>
-
+    <string name="title_activity_order_buyer_products">OrderBuyerProducts</string>
 
 
 </resources>

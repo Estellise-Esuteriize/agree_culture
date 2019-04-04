@@ -95,11 +95,14 @@ public class MenuPurchaseHistory extends Fragment {
 
                     if(task.isSuccessful()){
 
-                        for(DocumentSnapshot ref : task.getResult()){
-                            Orders order = ref.toObject(Orders.class);
-                            order.setCollectionId(ref.getId());
-                            orders.add(0, order);
-                            mAdapter.notifyItemRangeInserted(0, orders.size());
+                        if(!task.getResult().isEmpty()){
+
+                            for(DocumentSnapshot ref : task.getResult()){
+                                Orders order = ref.toObject(Orders.class);
+                                order.setCollectionId(ref.getId());
+                                orders.add(0, order);
+                                mAdapter.notifyItemRangeInserted(0, orders.size());
+                            }
                         }
 
                     }
@@ -121,13 +124,15 @@ public class MenuPurchaseHistory extends Fragment {
 
                     if(task.isSuccessful()){
 
-                        for(DocumentSnapshot ref : task.getResult()){
-                            Orders order = ref.toObject(Orders.class);
-                            order.setCollectionId(ref.getId());
-                            orders.add(0, order);
-                            mAdapter.notifyItemRangeInserted(0, orders.size());
-                        }
+                        if(!task.getResult().isEmpty()) {
 
+                            for (DocumentSnapshot ref : task.getResult()) {
+                                Orders order = ref.toObject(Orders.class);
+                                order.setCollectionId(ref.getId());
+                                orders.add(0, order);
+                                mAdapter.notifyItemRangeInserted(0, orders.size());
+                            }
+                        }
                     }
                     else{
                         try{
@@ -147,11 +152,14 @@ public class MenuPurchaseHistory extends Fragment {
 
                     if(task.isSuccessful()){
 
-                        for(DocumentSnapshot ref : task.getResult()){
-                            Orders order = ref.toObject(Orders.class);
-                            order.setCollectionId(ref.getId());
-                            orders.add(order);
-                            mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
+                        if(!task.getResult().isEmpty()) {
+
+                            for (DocumentSnapshot ref : task.getResult()) {
+                                Orders order = ref.toObject(Orders.class);
+                                order.setCollectionId(ref.getId());
+                                orders.add(order);
+                                mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
+                            }
                         }
 
                     }
@@ -172,13 +180,15 @@ public class MenuPurchaseHistory extends Fragment {
 
                     if(task.isSuccessful()){
 
-                        for(DocumentSnapshot ref : task.getResult()){
-                            Orders order = ref.toObject(Orders.class);
-                            order.setCollectionId(ref.getId());
-                            orders.add(order);
-                            mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
-                        }
+                        if(!task.getResult().isEmpty()) {
 
+                            for (DocumentSnapshot ref : task.getResult()) {
+                                Orders order = ref.toObject(Orders.class);
+                                order.setCollectionId(ref.getId());
+                                orders.add(order);
+                                mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
+                            }
+                        }
                     }
                     else{
                         try{
