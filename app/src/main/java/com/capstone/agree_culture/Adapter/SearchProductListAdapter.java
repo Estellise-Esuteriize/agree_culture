@@ -200,7 +200,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 quantity = product.getProductQuantity();
             }
 
-            final Orders orders = new Orders(product.getCollectionId(), product.getUserId(), Helper.currentUser.getDocumentId());
+            final Orders orders = new Orders(product.getProductMinimum(), product.getCollectionId(), product.getUserId(), Helper.currentUser.getDocumentId());
 
 
             AlertDialog.Builder builder = new AlertDialog.Builder(context);

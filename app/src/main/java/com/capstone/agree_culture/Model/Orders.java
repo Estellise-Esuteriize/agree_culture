@@ -7,9 +7,11 @@ public class Orders {
 
     /*
     private String productName;
-    private int productQuantity;
     private double productPrice;
     */
+
+    private int productQuantity;
+
     private String productUidRef;
     private String productOwnerUidRef;
 
@@ -30,12 +32,14 @@ public class Orders {
 
     }
 
-    public Orders(/*String productName, int productQuantity, double productPrice, */String productUidRef, String productOwnerUidRef, String productBuyerUidRef){
+    public Orders(/*String productName, */int productQuantity/*, double productPrice, */,String productUidRef, String productOwnerUidRef, String productBuyerUidRef){
         /*
         this.productName = productName;
-        this.productQuantity = productQuantity;
         this.productPrice = productPrice;
         */
+
+        this.productQuantity = productQuantity;
+
         this.productUidRef = productUidRef;
         this.productOwnerUidRef = productOwnerUidRef;
         this.productBuyerUidRef = productBuyerUidRef;
@@ -51,13 +55,6 @@ public class Orders {
         this.productName = productName;
     }
 
-    public int getProductQuantity() {
-        return productQuantity;
-    }
-
-    public void setProductQuantity(int productQuantity) {
-        this.productQuantity = productQuantity;
-    }
 
     public double getProductPrice() {
         return productPrice;
@@ -68,6 +65,13 @@ public class Orders {
     }
     */
 
+    public int getProductQuantity() {
+        return productQuantity;
+    }
+
+    public void setProductQuantity(int productQuantity) {
+        this.productQuantity = productQuantity;
+    }
 
     public String getCollectionId() {
         return collectionId;

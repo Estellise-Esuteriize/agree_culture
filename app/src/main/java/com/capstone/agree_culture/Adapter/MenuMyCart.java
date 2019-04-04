@@ -1,6 +1,9 @@
 package com.capstone.agree_culture.Adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,6 +46,12 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
     private FirebaseStorage mStorage;
     private StorageReference mStorageRef;
 
+
+    private final int PLUS = 101;
+    private final int MINUS = 102;
+
+    private OnProductClick productClick;
+
     public MenuMyCart(Context context, List<Orders> orders){
         this.context = context;
         this.orders = orders;
@@ -50,6 +59,9 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
         mDatabase = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
         mStorageRef = mStorage.getReference();
+
+        productClick = (OnProductClick) context;
+        
     }
 
 
@@ -64,6 +76,7 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
         Orders order = orders.get(i);
 
         final  MyViewHolder item = myViewHolder;
+        final int index = i;
 
         CollectionReference ref = mDatabase.collection(GlobalString.PRODUCTS);
         ref.orderBy("createdAt");
@@ -80,11 +93,17 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
                     item.productStatus.setTextColor(Helper.orderStatusColors(product.getProductStatus()));
                     item.productStatus.setText(product.getProductStatus());
 
-                    double price = (double)product.getProductQuantity() * product.getProductPrice();
+                    double price = (double)product.getProductMinimum() * product.getProductPrice();
 
-                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, product.getProductQuantity().toString(), product.getProductPrice().toString(), Double.toString(price)));
+                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
 
+                    item.productMinus.setOnClickListener(null);
+                    item.productPlus.setOnClickListener(null);
+                    item.productRemove.setOnClickListener(null);
+
+                    item.productMinus.setOnClickListener(new ProductPlusMinus(MINUS, item.itemView.getContext(), item.productDesc, index, product));
+                    item.productPlus.setOnClickListener(new ProductPlusMinus(PLUS, item.itemView.getContext(), item.productDesc, index, product));
 
 
                 }
@@ -128,8 +147,150 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
         }
     }
 
+    class ProductPlusMinus implements View.OnClickListener{
 
-    class 
+        private int type;
+        private int index;
+
+        private Context context;
+        private TextView desc;
+
+        private Product product;
+
+
+
+        public ProductPlusMinus(int type, Context context, TextView desc, int index, Product product){
+            this.type = type;
+
+            this.context = context;
+            this.desc = desc;
+
+            this.index = index;
+
+            this.product = product;
+
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Orders order = orders.get(index);
+
+            if(type == PLUS){
+
+                order.setProductQuantity(order.getProductQuantity() + 1);
+
+                if(order.getProductQuantity() > product.getProductQuantity()){
+
+                    order.setProductQuantity(order.getProductQuantity() - 1);
+
+                    Toast.makeText(context, context.getResources().getString(R.string.menu_car_product_plus_limit), Toast.LENGTH_LONG).show();
+
+                }
+                else{
+
+                    double price = order.getProductQuantity() * product.getProductPrice();
+
+                    desc.setText(context.getResources().getString(R.string.menu_cart_desc, Integer.toString(order.getProductQuantity()), Double.toString(product.getProductPrice()), Double.toString(price)));
+
+                }
+
+            }
+            else if(type == MINUS){
+
+                order.setProductQuantity(order.getProductQuantity() - 1);
+
+                if(order.getProductQuantity() < product.getProductMinimum()){
+
+                    order.setProductQuantity(order.getProductQuantity() + 1);
+
+                    Toast.makeText(context, context.getResources().getString(R.string.menu_car_product_plus_limit), Toast.LENGTH_LONG).show();
+
+                }
+                else{
+
+                    double price = order.getProductQuantity() * product.getProductPrice();
+
+                    desc.setText(context.getResources().getString(R.string.menu_cart_desc, Integer.toString(order.getProductQuantity()), Double.toString(product.getProductPrice()), Double.toString(price)));
+
+
+                }
+
+            }
+
+            orders.set(index, order);
+
+        }
+    }
+
+
+    class RemoveProduct implements View.OnClickListener{
+
+
+        Context context;
+        int index;
+
+        public RemoveProduct(Context context, int index){
+
+            this.context = context;
+            this.index = index;
+
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(context.getResources().getString(R.string.confirm));
+            builder.setMessage(context.getResources().getString(R.string.remove_product));
+            builder.setPositiveButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    Orders order = orders.get(index);
+
+                    mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful()){
+                                orders.remove(index);
+                            }
+                            else {
+                                try{
+                                    throw task.getException();
+                                }
+                                catch (Exception ex){
+                                    Toast.makeText(context, ex.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+
+                        }
+                    });
+
+
+                }
+            });
+            builder.setNegativeButton(context.getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            builder.create().show();
+
+
+        }
+
+    }
+
+    public interface OnProductClick{
+        void onRemove(int index);
+    }
+
+
 
 
 }

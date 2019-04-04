@@ -9,6 +9,7 @@
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
 
+    <string name="remove_product">Remove product</string>
 
     <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -62,6 +63,8 @@
         Price : %2$s\n
         Total : %3$s
     </string>
+    <string name="menu_car_product_plus_limit">Quantity cannot be zero or more than the product left</string>
+
 
 
     <!-- Home Alert Dialog -->
