@@ -3,8 +3,8 @@ package com.capstone.agree_culture.Adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,13 +27,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
+public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAdapter.MyViewHolder> {
 
 
-    private List<Orders> orders = new ArrayList<>();
+    private List<Orders> orders;
 
     private Context context;
 
@@ -52,16 +51,17 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
 
     private OnProductClick productClick;
 
-    public MenuMyCart(Context context, List<Orders> orders){
-        this.context = context;
+    public MenuMyCartListAdapter(Fragment fragment, List<Orders> orders){
         this.orders = orders;
 
         mDatabase = FirebaseFirestore.getInstance();
         mStorage = FirebaseStorage.getInstance();
         mStorageRef = mStorage.getReference();
 
-        productClick = (OnProductClick) context;
-        
+        context = fragment.getContext();
+
+        productClick = (OnProductClick) fragment;
+
     }
 
 
@@ -104,7 +104,7 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
 
                     item.productMinus.setOnClickListener(new ProductPlusMinus(MINUS, item.itemView.getContext(), item.productDesc, index, product));
                     item.productPlus.setOnClickListener(new ProductPlusMinus(PLUS, item.itemView.getContext(), item.productDesc, index, product));
-
+                    item.productRemove.setOnClickListener(new RemoveProduct(item.itemView.getContext(), index));
 
                 }
                 else{
@@ -255,7 +255,7 @@ public class MenuMyCart extends RecyclerView.Adapter<MenuMyCart.MyViewHolder> {
                         public void onComplete(@NonNull Task<Void> task) {
 
                             if(task.isSuccessful()){
-                                orders.remove(index);
+                                productClick.onRemove(index);
                             }
                             else {
                                 try{

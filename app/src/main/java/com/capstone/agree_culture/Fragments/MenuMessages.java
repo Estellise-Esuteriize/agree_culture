@@ -73,10 +73,11 @@ public class MenuMessages extends Fragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(mAdapter);
 
 
         if(messages.isEmpty()){
+
+            recyclerView.setAdapter(mAdapter);
 
 
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -94,6 +95,7 @@ public class MenuMessages extends Fragment {
 
                         for(DocumentSnapshot item : task.getResult()){
                             Messages message = item.toObject(Messages.class);
+                            message.setCollectionId(item.getId());
                             messages.add(0, message);
                             mAdapter.notifyItemRangeInserted(messages.size() - 1, messages.size());
                         }

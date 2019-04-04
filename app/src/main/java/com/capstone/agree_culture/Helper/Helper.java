@@ -15,7 +15,7 @@ public class Helper {
 
     public static User currentUser = null;
 
-    public static List<Orders> newOrders;
+    public static List<Orders> newOrder = null;
 
     public static List<Messages> newMessage = null;
 
@@ -45,6 +45,16 @@ public class Helper {
         newMessage.add(messages);
     }
 
+
+    public static void addNewOrders(Orders order){
+
+        if(newOrder == null){
+            newOrder = new ArrayList<>();
+        }
+
+        newOrder.add(order);
+
+    }
 
 
     public static int orderStatusColors(String status){

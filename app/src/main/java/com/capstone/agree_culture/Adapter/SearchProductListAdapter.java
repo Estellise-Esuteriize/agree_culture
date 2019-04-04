@@ -224,6 +224,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
 
                                         if (task.isSuccessful()) {
                                             Toast.makeText(context, context.getResources().getString(R.string.card_add_success), Toast.LENGTH_LONG).show();
+                                            Helper.addNewOrders(orders);
                                         } else {
                                             try {
 
