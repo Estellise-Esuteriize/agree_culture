@@ -33,9 +33,12 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Fragments.MainMenu;
+import com.capstone.agree_culture.Fragments.MenuMessages;
+import com.capstone.agree_culture.Fragments.MenuMyCart;
 import com.capstone.agree_culture.Fragments.MenuProducts;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
+import com.capstone.agree_culture.Model.Messages;
 import com.capstone.agree_culture.Model.User;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -78,15 +81,18 @@ public class MainActivity extends AppCompatActivity
      * Fragment
      * Fragment Transaction Variable
      */
-    FragmentTransaction fragment_transaction;
-    int fragment = R.id.main_frame_content;
+    private FragmentTransaction fragment_transaction;
+    private int fragment = R.id.main_frame_content;
 
     /**
      * Fragments
      * variables
      */
-    MainMenu main_menu = new MainMenu();
-    MenuProducts menu_products = new MenuProducts();
+    private MainMenu main_menu = new MainMenu();
+    private MenuMessages messages = new MenuMessages();
+    private MenuProducts menu_products = new MenuProducts();
+    private MenuMyCart menuMyCart = new MenuMyCart();
+
 
     /**
      * Menu
@@ -171,6 +177,7 @@ public class MainActivity extends AppCompatActivity
 
                         } else if (currentUser.getRole().equals(GlobalString.SUPPLIER)) {
                             menu.findItem(R.id.nav_my_cart).setVisible(false);
+                            menu.findItem(R.id.nav_purchase_history).setVisible(false);
                         }
 
                         user_photo.setOnClickListener(new ChangePhoto());
@@ -196,6 +203,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.nav_my_cart).setVisible(false);
             menu.findItem(R.id.nav_orders).setVisible(false);
             menu.findItem(R.id.nav_logout).setVisible(false);
+            menu.findItem(R.id.nav_purchase_history).setVisible(false);
         }
 
     }
@@ -251,15 +259,29 @@ public class MainActivity extends AppCompatActivity
             fragment_transaction.replace(fragment, main_menu);
             fragment_transaction.commit();
 
-        } else if (id == R.id.nav_products) {
+        }
+        else if (id == R.id.nav_messages) {
+            if (mUser != null) {
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, messages);
+                fragment_transaction.commit();
+            }
+        }
+        else if (id == R.id.nav_products) {
             if (mUser != null) {
                 fragment_transaction = getSupportFragmentManager().beginTransaction();
                 fragment_transaction.replace(fragment, menu_products);
                 fragment_transaction.commit();
             }
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_logout) {
+        }
+        else if(id == R.id.nav_my_cart){
+            if (mUser != null) {
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menuMyCart);
+                fragment_transaction.commit();
+            }
+        }
+        else if (id == R.id.nav_logout) {
 
             if (mUser != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);

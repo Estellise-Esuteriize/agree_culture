@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.capstone.agree_culture.Adapter.MenuMyCartListAdapter;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
-import com.capstone.agree_culture.Model.Messages;
 import com.capstone.agree_culture.Model.Orders;
 import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.R;
@@ -32,7 +31,7 @@ import com.google.firebase.firestore.WriteBatch;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProductClick {
+public class MenuPurchaseHistory extends Fragment {
 
 
     private List<Orders> orders = new ArrayList<>();
@@ -40,7 +39,6 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
     private RecyclerView recyclerView;
     private MenuMyCartListAdapter mAdapter;
 
-    private Button orderButton;
     private View progressBar;
 
     private User currentUser;
@@ -70,7 +68,6 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
 
 
         recyclerView = (RecyclerView) view.findViewById(R.id.menu_cart_recycler);
-        orderButton = (Button) view.findViewById(R.id.menu_cart_order_btn);
         progressBar = view.findViewById(R.id.progress_bar);
 
         currentUser = Helper.currentUser;
@@ -86,17 +83,15 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
             mAdapter = new MenuMyCartListAdapter(this, orders);
 
 
+            /*
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             progressBar.setVisibility(View.VISIBLE);
+            */
 
-
-            mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", currentUser.getDocumentId()).whereEqualTo("status", Orders.PENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", currentUser.getDocumentId()).whereEqualTo("status", Orders.DELIVERY).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
-                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    progressBar.setVisibility(View.GONE);
 
                     if(task.isSuccessful()){
 
@@ -104,6 +99,83 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
                             Orders order = ref.toObject(Orders.class);
                             order.setCollectionId(ref.getId());
                             orders.add(0, order);
+                            mAdapter.notifyItemRangeInserted(0, orders.size());
+                        }
+
+                    }
+                    else{
+                        try{
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            });
+
+            mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", currentUser.getDocumentId()).whereEqualTo("status", Orders.ORDER).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+
+                    if(task.isSuccessful()){
+
+                        for(DocumentSnapshot ref : task.getResult()){
+                            Orders order = ref.toObject(Orders.class);
+                            order.setCollectionId(ref.getId());
+                            orders.add(0, order);
+                            mAdapter.notifyItemRangeInserted(0, orders.size());
+                        }
+
+                    }
+                    else{
+                        try{
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            });
+
+            mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", currentUser.getDocumentId()).whereEqualTo("status", Orders.COMPLETED).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+
+                    if(task.isSuccessful()){
+
+                        for(DocumentSnapshot ref : task.getResult()){
+                            Orders order = ref.toObject(Orders.class);
+                            order.setCollectionId(ref.getId());
+                            orders.add(order);
+                            mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
+                        }
+
+                    }
+                    else{
+                        try{
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            });
+
+            mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", currentUser.getDocumentId()).whereEqualTo("status", Orders.CANCELED).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                    if(task.isSuccessful()){
+
+                        for(DocumentSnapshot ref : task.getResult()){
+                            Orders order = ref.toObject(Orders.class);
+                            order.setCollectionId(ref.getId());
+                            orders.add(order);
                             mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
                         }
 
@@ -120,79 +192,12 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
             });
 
         }
-        else{
 
-            for(Orders order : Helper.newOrder){
-
-                orders.add(0, order);
-                mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
-
-            }
-
-        }
-
-        Helper.newMessage = new ArrayList<>();
-
-
-        orderButton.setOnClickListener(null);
-
-        orderButton.setOnClickListener(new OrderProduct());
 
     }
 
 
-    @Override
-    public void onRemove(int index) {
-
-        orders.remove(index);
-        mAdapter.notifyItemChanged(index);
-
-    }
 
 
-    class OrderProduct implements View.OnClickListener{
-
-        public OrderProduct(){
-
-        }
-
-        @Override
-        public void onClick(View v) {
-
-            WriteBatch batch = mDatabase.batch();
-
-            for(Orders order : orders){
-
-                DocumentReference rec = mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId());
-                batch.update(rec, "status", Orders.ORDER);
-
-            }
-
-            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            progressBar.setVisibility(View.VISIBLE);
-
-            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-
-                    if(task.isSuccessful()){
-                        orders = new ArrayList<>();
-                        mAdapter.notifyDataSetChanged();
-                    }
-                    else{
-                        try{
-                            throw task.getException();
-                        }
-                        catch (Exception ex){
-                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                }
-            });
-
-        }
-    }
 
 }
