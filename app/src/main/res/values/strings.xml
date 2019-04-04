@@ -9,7 +9,14 @@
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
 
-    <string name="remove_product">Remove product</string>
+    <string name="successfully_delivered">Successfully delivered products</string>
+
+    <string name="cancel_product">Cancel order product?</string>
+    <string name="remove_product">Remove product?</string>
+    <string name="success_product_remove">Successfully canceled order</string>
+
+    <string name="totalAmount">Total Amount</string>
+    <string name="delivered">Delivered</string>
 
     <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -65,6 +72,12 @@
     </string>
     <string name="menu_car_product_plus_limit">Quantity cannot be zero or more than the product left</string>
 
+
+    <!-- Main Menu -->
+    <!-- Orders -->
+    <string name="menu_order_success_cancel_order">Successfully cancel order</string>
+
+    <string name="order_buyer_product_total_amount">&#8369; : %1$s</string>
 
     <!-- Home Alert Dialog -->
     <string name="home_photo_title">Photo</string>
