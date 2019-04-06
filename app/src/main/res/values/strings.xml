@@ -13,6 +13,7 @@
 
     <string name="cancel_product">Cancel order product?</string>
     <string name="remove_product">Remove product?</string>
+    <string name="cancel_order">Cancel order?</string>
     <string name="success_product_remove">Successfully canceled order</string>
 
     <string name="totalAmount">Total Amount</string>

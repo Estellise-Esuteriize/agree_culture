@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -88,7 +89,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
+        recyclerView.setAdapter(mAdapter);
 
 
         if(orders.isEmpty()){
@@ -96,6 +97,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
             mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", buyer.getDocumentId()).whereEqualTo("productOwnerUidRef", Helper.currentUser.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
 
                     if(task.isSuccessful()){
 
@@ -107,10 +109,17 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                 Orders order = item.toObject(Orders.class);
                                 order.setCollectionId(item.getId());
 
+
+                                if(!order.getStatus().equals(Orders.ORDER) && !order.getStatus().equals(Orders.DELIVERY)){
+                                    continue;
+                                }
+
+
                                 orders.add(order);
 
                                 final Orders fOrder = order;
                                 final int quantity = order.getProductQuantity();
+
 
                                 mDatabase.collection(GlobalString.PRODUCTS).document(order.getProductUidRef()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
@@ -134,8 +143,6 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                                 DecimalFormat format = new DecimalFormat("#,###.00");
 
                                                 total.setText(getResources().getString(R.string.order_buyer_product_total_amount, format.format(totalAmount)));
-
-
                                             }
 
 
@@ -143,7 +150,6 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
                                     }
                                 });
-
 
                             }
 

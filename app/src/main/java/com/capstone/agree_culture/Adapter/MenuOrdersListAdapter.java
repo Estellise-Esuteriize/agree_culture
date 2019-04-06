@@ -68,7 +68,7 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
 
 
         myViewHolder.cancel.setOnClickListener(new CancelOrder(myViewHolder.itemView.getContext(), user));
-
+        myViewHolder.itemView.setOnClickListener(new OpenBoughtProducts(myViewHolder.itemView.getContext(), user));
 
     }
 
@@ -133,7 +133,7 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
 
             AlertDialog.Builder dialog = new AlertDialog.Builder(context);
             dialog.setTitle(context.getResources().getString(R.string.confirm));
-            dialog.setMessage(context.getResources().getString(R.string.remove_product));
+            dialog.setMessage(R.string.cancel_order);
             dialog.setPositiveButton(context.getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

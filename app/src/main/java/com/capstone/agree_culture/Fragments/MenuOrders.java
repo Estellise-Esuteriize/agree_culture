@@ -83,14 +83,17 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
 
                     List<String> ownerUuid = new ArrayList<>();
 
-
                     if(!task.getResult().isEmpty()){
 
                         for(DocumentSnapshot item : task.getResult()){
 
                             Orders order = item.toObject(Orders.class);
 
-                            ownerUuid.add(order.getProductOwnerUidRef());
+                            if(!order.getStatus().equals(Orders.ORDER) && !order.getStatus().equals(Orders.DELIVERY)){
+                                continue;
+                            }
+
+                            ownerUuid.add(order.getProductBuyerUidRef());
 
                         }
 
@@ -107,6 +110,7 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
                                         if(task.getResult().exists()){
 
                                             User user = task.getResult().toObject(User.class);
+                                            user.setDocumentId(task.getResult().getId());
 
                                             buyers.add(user);
 
@@ -130,15 +134,16 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
                         }
 
                     }
-                    else{
-                        try {
-                            throw task.getException();
-                        }
-                        catch (Exception ex){
-                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
 
+                }
+                else{
+                    try {
+                        throw task.getException();
+                    }
+                    catch (Exception ex){
+
+                        Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
 
 
