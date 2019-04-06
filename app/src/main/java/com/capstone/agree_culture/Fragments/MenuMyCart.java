@@ -1,5 +1,6 @@
 package com.capstone.agree_culture.Fragments;
 
+import android.media.MediaSync;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.capstone.agree_culture.Adapter.MenuMyCartListAdapter;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
@@ -29,8 +39,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProductClick {
 
@@ -53,6 +67,9 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
      */
     private FirebaseFirestore mDatabase;
 
+    private RequestQueue queue;
+
+
 
     @Nullable
     @Override
@@ -68,6 +85,7 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
 
         mDatabase = FirebaseFirestore.getInstance();
 
+        queue = Volley.newRequestQueue(getContext());
 
         recyclerView = (RecyclerView) view.findViewById(R.id.menu_cart_recycler);
         orderButton = (Button) view.findViewById(R.id.menu_cart_order_btn);
@@ -152,7 +170,11 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
 
     class OrderProduct implements View.OnClickListener{
 
+        List<String> ownerUidRef;
+
         public OrderProduct(){
+
+            ownerUidRef = new ArrayList<>();
 
         }
 
@@ -166,7 +188,11 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
                 DocumentReference rec = mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId());
                 batch.update(rec, "status", Orders.ORDER);
 
+                ownerUidRef.add(order.getProductOwnerUidRef());
+
             }
+
+            ownerUidRef = Helper.handleDuplicates(ownerUidRef);
 
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -180,7 +206,55 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
                         orders = new ArrayList<>();
                         mAdapter.notifyDataSetChanged();
 
-                        
+                        for(final String ref : ownerUidRef){
+
+                            mDatabase.collection(GlobalString.USER).document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if(task.isSuccessful()){
+
+                                        if(task.getResult().exists()){
+
+                                            User user = task.getResult().toObject(User.class);
+
+                                            final String phoneNumber = user.getPhone_number();
+
+                                            final String url = "https://www.itexmo.com/php_api/api.php";
+
+                                            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                                                @Override
+                                                public void onResponse(String response) {
+                                                    Log.d("Response", response);
+                                                }
+                                            }, new Response.ErrorListener() {
+                                                @Override
+                                                public void onErrorResponse(VolleyError error) {
+                                                    Log.d("ErrorResponse", error.getMessage());
+                                                }
+                                            }){
+                                                @Override
+                                                protected Map<String, String> getParams() throws AuthFailureError {
+
+                                                    Map<String, String> params = new HashMap<>();
+
+                                                    params.put("1", phoneNumber);
+                                                    params.put("2", Helper.MESSAGE_ORDER);
+                                                    params.put("3", Helper.ITEXMO_API);
+                                                    params.put("4", "HIGH");
+
+                                                    return params;
+
+                                                }
+                                            };
+
+                                            queue.add(request);
+                                        }
+
+                                    }
+                                }
+                            });
+
+                        }
 
                     }
                     else{

@@ -11,6 +11,8 @@ import java.util.List;
 public class Helper {
 
 
+    public static final String ITEXMO_API = "TR-AGREE350631_91W3C";
+
     public static Boolean isFirestoreSettingsInitialize = false;
 
     public static User currentUser = null;
@@ -18,6 +20,13 @@ public class Helper {
     public static List<Orders> newOrder = null;
 
     public static List<Messages> newMessage = null;
+
+
+    /**
+     * Message for text
+     */
+
+    public static final String MESSAGE_ORDER = "A customer has ordered for your products";
 
 
     public static String userProductType(String user_product_type){
@@ -76,6 +85,22 @@ public class Helper {
         }
 
         return R.color.order_canceled;
+
+    }
+
+    public static <T> ArrayList<T> handleDuplicates(List<T> uuIds){
+
+        ArrayList<T> newList = new ArrayList<>();
+
+        for(T element : uuIds){
+
+            if(!newList.contains(element)){
+                newList.add(element);
+            }
+
+        }
+
+        return newList;
 
     }
 
