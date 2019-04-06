@@ -110,28 +110,34 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                    if(task.isComplete()){
-                        for (QueryDocumentSnapshot document : task.getResult()){
-                            products.add(document.toObject(Product.class));
-                            products.get(products.size() - 1).setCollectionId(document.getId());
+
+                    progress_bar.setVisibility(View.GONE);
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                    if(task.isSuccessful()){
+
+                        if(!task.getResult().isEmpty()){
+
+                            for (QueryDocumentSnapshot document : task.getResult()){
+
+                                products.add((Product) document.toObject(Product.class));
+                                products.get(products.size() - 1).setCollectionId(document.getId());
+
+
+                            }
+
+                            mAdapter.notifyDataSetChanged();
+
+                            Log.d("Product Size", products.size() + "");
+
                         }
 
-                        Log.d("ProductsSize", "" + products.size());
-
-                        progress_bar.setVisibility(View.GONE);
-                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
-                        mAdapter.notifyDataSetChanged();
                     }
                     else{
                         try{
                             throw task.getException();
                         }
                         catch (Exception ex){
-
-                            progress_bar.setVisibility(View.GONE);
-                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-
                             Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
                         }
                     }
@@ -170,9 +176,6 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
             mAdapter.notifyDataSetChanged();
 
         }
-
-        Log.d("STATUS", "I WAS IN HERE");
-
 
         super.onActivityResult(requestCode, resultCode, data);
     }

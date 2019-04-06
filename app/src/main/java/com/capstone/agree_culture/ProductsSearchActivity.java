@@ -85,8 +85,8 @@ public class ProductsSearchActivity extends AppCompatActivity {
             progress_bar.setVisibility(View.VISIBLE);
 
 
-            mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("product_name", searchKeyword).whereEqualTo("user_product_type",
-                    Helper.userProductType(Helper.currentUser.getRole())).whereEqualTo("product_status", Product.PRODUCT_STATUS_ENABLE).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("productName", searchKeyword).whereEqualTo("userProductType",
+                    Helper.userProductType(Helper.currentUser.getRole())).whereEqualTo("productStatus", Product.PRODUCT_STATUS_ENABLE).limit(10).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
 

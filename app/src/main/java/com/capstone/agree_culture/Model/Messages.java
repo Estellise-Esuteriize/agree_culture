@@ -18,9 +18,10 @@ public class Messages {
     private String toUserUidRef;
     private String toUserNumber;
 
+    /*
     private String createdAt;
     private String updatedAt;
-
+     */
 
     public Messages(){
 
@@ -30,8 +31,6 @@ public class Messages {
         this.userUidRef = userUidRef;
         this.toUserUidRef = toUserUidRef;
         this.toUserNumber = toUserNumber;
-        createdAt = FieldValue.serverTimestamp().toString();
-        updatedAt = FieldValue.serverTimestamp().toString();
     }
 
 
@@ -51,6 +50,7 @@ public class Messages {
         this.toUserNumber = toUserNumber;
     }
 
+    /*
     public String getCreatedAt() {
         return createdAt;
     }
@@ -66,6 +66,7 @@ public class Messages {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
+    */
 
     public String getCollectionId() {
         return collectionId;

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.capstone.agree_culture.Model.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -142,25 +144,50 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
 
             intent.setData(Uri.parse("smsto:" + user.getPhone_number()));
 
-            ((Activity)context).startActivityForResult(intent, SMS_MESSAGE);
-
-
             final Messages message = new Messages(currentUser.getDocumentId(), user.getDocumentId(), user.getPhone_number());
 
             mDatabase.collection(GlobalString.MESSAGES).whereEqualTo("userUidRef", currentUser.getDocumentId()).whereEqualTo("toUserUidRef", user.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
                     if(task.isSuccessful()){
+
                         if(task.getResult().isEmpty()){
-                            mDatabase.collection(GlobalString.MESSAGES).add(message);
+
+                            mDatabase.collection(GlobalString.MESSAGES).add(message).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+
+                                    if(!task.isSuccessful()){
+                                        try{
+                                            throw task.getException();
+                                        }
+                                        catch (Exception ex){
+                                            Log.d("NewMessage", ex.getMessage() + "");
+                                        }
+                                    }
+
+                                }
+                            });
 
                             Helper.addNewMessages(message);
 
                         }
                     }
+                    else{
+                        try{
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Log.d("RetrieveMessage", ex.getMessage() + "");
+                        }
+                    }
 
                 }
             });
+
+
+            ((Activity)context).startActivityForResult(intent, SMS_MESSAGE);
 
             /**
             if (intent.resolveActivity(context.getPackageManager()) != null) {
