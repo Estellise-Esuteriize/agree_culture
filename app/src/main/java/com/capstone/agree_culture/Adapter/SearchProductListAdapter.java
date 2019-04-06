@@ -239,7 +239,7 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 
-                    mDatabase.collection(GlobalString.ORDERS).whereEqualTo("ownerUidRef", orders.getProductOwnerUidRef()).whereEqualTo("buyerUidRef", orders.getProductBuyerUidRef()).whereEqualTo("productUidRef", orders.getProductUidRef()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productOwnerUidRef", orders.getProductOwnerUidRef()).whereEqualTo("productBuyerUidRef", orders.getProductBuyerUidRef()).whereEqualTo("productUidRef", orders.getProductUidRef()).whereEqualTo("status", Orders.PENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                         @Override
                         public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 

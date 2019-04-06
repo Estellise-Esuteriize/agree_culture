@@ -1,10 +1,12 @@
 package com.capstone.agree_culture.Fragments;
 
+import android.content.DialogInterface;
 import android.media.MediaSync;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -95,19 +97,18 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
 
         fragment = this;
 
+
+        mAdapter = new MenuMyCartListAdapter(this, orders);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
         if(orders.isEmpty()){
-
-            mAdapter = new MenuMyCartListAdapter(this, orders);
-
 
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
             progressBar.setVisibility(View.VISIBLE);
-
 
             mDatabase.collection(GlobalString.ORDERS).whereEqualTo("productBuyerUidRef", currentUser.getDocumentId()).whereEqualTo("status", Orders.PENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -122,8 +123,9 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
                             Orders order = ref.toObject(Orders.class);
                             order.setCollectionId(ref.getId());
                             orders.add(0, order);
-                            mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
                         }
+
+                        mAdapter.notifyDataSetChanged();
 
                     }
                     else{
@@ -140,11 +142,13 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
         }
         else{
 
-            for(Orders order : Helper.newOrder){
+            if(Helper.newOrder != null && !Helper.newOrder.isEmpty()){
+                for(Orders order : Helper.newOrder){
 
-                orders.add(0, order);
-                mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
+                    orders.add(0, order);
+                    mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
 
+                }
             }
 
         }
@@ -181,93 +185,128 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
         @Override
         public void onClick(View v) {
 
-            WriteBatch batch = mDatabase.batch();
-
-            for(Orders order : orders){
-
-                DocumentReference rec = mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId());
-                batch.update(rec, "status", Orders.ORDER);
-
-                ownerUidRef.add(order.getProductOwnerUidRef());
-
+            if(orders.isEmpty()){
+                return;
             }
 
-            ownerUidRef = Helper.handleDuplicates(ownerUidRef);
 
-            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-            progressBar.setVisibility(View.VISIBLE);
-
-            batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(getResources().getString(R.string.confirm));
+            builder.setMessage(R.string.menu_cart_confirm_order);
+            builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                public void onClick(DialogInterface dialog, int which) {
 
-                    if(task.isSuccessful()){
-                        orders = new ArrayList<>();
-                        mAdapter.notifyDataSetChanged();
+                    WriteBatch batch = mDatabase.batch();
 
-                        for(final String ref : ownerUidRef){
+                    for(Orders order : orders){
 
-                            mDatabase.collection(GlobalString.USER).document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if(task.isSuccessful()){
+                        DocumentReference rec = mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId());
+                        batch.update(rec, "status", Orders.ORDER);
 
-                                        if(task.getResult().exists()){
+                        ownerUidRef.add(order.getProductOwnerUidRef());
 
-                                            User user = task.getResult().toObject(User.class);
+                    }
 
-                                            final String phoneNumber = user.getPhone_number();
+                    ownerUidRef = Helper.handleDuplicates(ownerUidRef);
 
-                                            final String url = "https://www.itexmo.com/php_api/api.php";
+                    getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    progressBar.setVisibility(View.VISIBLE);
 
-                                            StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-                                                @Override
-                                                public void onResponse(String response) {
-                                                    Log.d("Response", response);
+                    batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+
+                            if(task.isSuccessful()){
+                                orders.clear();
+                                mAdapter.notifyDataSetChanged();
+
+                                for(final String ref : ownerUidRef){
+
+                                    mDatabase.collection(GlobalString.USER).document(ref).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                            progressBar.setVisibility(View.GONE);
+
+                                            Toast.makeText(getContext(), getResources().getString(R.string.menu_cart_order_success), Toast.LENGTH_SHORT).show();
+
+                                            if(task.isSuccessful()){
+
+                                                if(task.getResult().exists()){
+
+                                                    User user = task.getResult().toObject(User.class);
+
+                                                    final String phoneNumber = user.getPhone_number();
+
+                                                    final String url = "https://www.itexmo.com/php_api/api.php";
+
+                                                    StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                                                        @Override
+                                                        public void onResponse(String response) {
+                                                            Log.d("Response", response);
+                                                        }
+                                                    }, new Response.ErrorListener() {
+                                                        @Override
+                                                        public void onErrorResponse(VolleyError error) {
+                                                            Log.d("ErrorResponse", error.getMessage());
+                                                        }
+                                                    }){
+                                                        @Override
+                                                        protected Map<String, String> getParams() throws AuthFailureError {
+
+                                                            Map<String, String> params = new HashMap<>();
+
+                                                            params.put("1", phoneNumber);
+                                                            params.put("2", Helper.MESSAGE_ORDER);
+                                                            params.put("3", Helper.ITEXMO_API);
+
+                                                            return params;
+
+                                                        }
+                                                    };
+
+                                                    queue.add(request);
                                                 }
-                                            }, new Response.ErrorListener() {
-                                                @Override
-                                                public void onErrorResponse(VolleyError error) {
-                                                    Log.d("ErrorResponse", error.getMessage());
-                                                }
-                                            }){
-                                                @Override
-                                                protected Map<String, String> getParams() throws AuthFailureError {
 
-                                                    Map<String, String> params = new HashMap<>();
-
-                                                    params.put("1", phoneNumber);
-                                                    params.put("2", Helper.MESSAGE_ORDER);
-                                                    params.put("3", Helper.ITEXMO_API);
-                                                    params.put("4", "HIGH");
-
-                                                    return params;
-
-                                                }
-                                            };
-
-                                            queue.add(request);
+                                            }
                                         }
+                                    });
 
-                                    }
                                 }
-                            });
+
+                            }
+                            else{
+                                try{
+                                    throw task.getException();
+                                }
+                                catch (Exception ex){
+
+                                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                    progressBar.setVisibility(View.GONE);
+
+                                    Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                                }
+                            }
 
                         }
+                    });
 
-                    }
-                    else{
-                        try{
-                            throw task.getException();
-                        }
-                        catch (Exception ex){
-                            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
+
 
                 }
             });
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+
+            builder.create().show();
+
 
         }
     }

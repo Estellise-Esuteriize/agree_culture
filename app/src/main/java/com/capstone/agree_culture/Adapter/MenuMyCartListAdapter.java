@@ -73,7 +73,7 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
-        Orders order = orders.get(i);
+        final Orders order = orders.get(i);
 
         final  MyViewHolder item = myViewHolder;
         final int index = i;
@@ -90,8 +90,10 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
 
                     Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.productPhoto);
 
-                    item.productStatus.setTextColor(Helper.orderStatusColors(product.getProductStatus()));
-                    item.productStatus.setText(product.getProductStatus());
+                    item.productStatus.setTextColor(Helper.orderStatusColors(order.getStatus()));
+                    item.productStatus.setText(order.getStatus());
+
+                    item.productName.setText(product.getProductName());
 
                     double price = (double)product.getProductMinimum() * product.getProductPrice();
 
@@ -130,7 +132,7 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
 
 
         public ImageView productPhoto, productRemove, productPlus, productMinus;
-        public TextView productStatus, productDesc;
+        public TextView productStatus, productDesc, productName;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -138,6 +140,7 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
 
             productPhoto = (ImageView) itemView.findViewById(R.id.menu_cart_photo);
             productStatus = (TextView) itemView.findViewById(R.id.menu_cart_status);
+            productName = (TextView) itemView.findViewById(R.id.menu_cart_product_name);
             productDesc = (TextView) itemView.findViewById(R.id.menu_cart_desc);
             productRemove = (ImageView) itemView.findViewById(R.id.menu_cart_delete);
             productPlus = (ImageView) itemView.findViewById(R.id.menu_cart_addition);
