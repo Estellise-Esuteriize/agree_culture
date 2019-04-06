@@ -106,7 +106,7 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
             progress_bar.setVisibility(View.VISIBLE);
 
 
-            mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("user_id", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("userId", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
 

@@ -47,7 +47,7 @@
         <activity
             android:name=".OrderBuyerProducts"
             android:label="@string/title_activity_order_buyer_products"
-            android:theme="@style/AppTheme.NoActionBar.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ProductsSearchActivity"
             android:label="@string/title_activity_search_product"

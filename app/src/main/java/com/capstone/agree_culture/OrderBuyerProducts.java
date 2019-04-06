@@ -1,9 +1,12 @@
 package com.capstone.agree_culture;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,6 +58,8 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
     private double totalAmount = 0;
 
+    private Context context;
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -65,6 +71,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_buyer_products);
 
+        context = this;
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -130,6 +137,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                             if(task.getResult().exists()){
 
                                                 Product product = task.getResult().toObject(Product.class);
+                                                product.setCollectionId(task.getResult().getId());
 
                                                 Product prod = new Product(buyer.getDocumentId(), product.getProductName(), product.getProductPrice(), fOrder.getProductQuantity(), product.getProductMinimum(), buyer.getRole());
                                                 prod.setProductPhoto(product.getProductPhoto());
@@ -142,7 +150,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
                                                 DecimalFormat format = new DecimalFormat("#,###.00");
 
-                                                total.setText(getResources().getString(R.string.order_buyer_product_total_amount, format.format(totalAmount)));
+                                                total.setText(getResources().getString(R.string.order_buyer_product_total_amount, "",format.format(totalAmount)));
                                             }
 
 
@@ -154,6 +162,10 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                             }
 
                             mAdapter.notifyDataSetChanged();
+
+                            if(!orders.isEmpty()){
+                                completed.setOnClickListener(new TransferProduct());
+                            }
 
                         }
 
@@ -173,6 +185,8 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
 
         }
+
+
 
 
 
@@ -254,9 +268,99 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
 
 
-
-
         }
     }
+
+
+     class TransferProduct implements View.OnClickListener{
+         @Override
+         public void onClick(View v) {
+
+             AlertDialog.Builder builder = new AlertDialog.Builder(context);
+             builder.setTitle(R.string.confirm);
+             builder.setTitle(R.string.delivered_successfully);
+             builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                 @Override
+                 public void onClick(DialogInterface dialog, int which) {
+
+                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                     progressBar.setVisibility(View.VISIBLE);
+
+                     WriteBatch batch = mDatabase.batch();
+
+                     for(Orders order : orders){
+
+                         DocumentReference ref = mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId());
+                         batch.update(ref, "status", Orders.COMPLETED);
+
+                     }
+
+                     batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                         @Override
+                         public void onComplete(@NonNull Task<Void> task) {
+
+                             if(task.isSuccessful()){
+
+                                 Toast.makeText(getApplicationContext(), R.string.success_product_transferred, Toast.LENGTH_SHORT).show();
+
+                                 for(Product product : products){
+
+                                     mDatabase.collection(GlobalString.PRODUCTS).add(product).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                         @Override
+                                         public void onComplete(@NonNull Task<DocumentReference> task) {
+                                             if(!task.isSuccessful()){
+                                                 try{
+                                                     throw task.getException();
+                                                 }
+                                                 catch (Exception ex){
+                                                     Log.d("Transfer Product", ex.getMessage() + "");
+                                                 }
+                                             }
+                                         }
+                                     });
+
+                                 }
+
+                                 orders.clear();
+                                 mAdapter.notifyDataSetChanged();
+
+                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                 progressBar.setVisibility(View.GONE);
+
+                             }
+                             else{
+
+                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                 progressBar.setVisibility(View.GONE);
+
+                                 try{
+                                     throw task.getException();
+                                 }catch (Exception ex){
+                                     Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                                 }
+                             }
+
+
+                         }
+                     });
+
+
+                 }
+             });
+             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                 @Override
+                 public void onClick(DialogInterface dialog, int which) {
+
+                 }
+             });
+
+             builder.create().show();
+
+
+         }
+     }
+
+
 
 }

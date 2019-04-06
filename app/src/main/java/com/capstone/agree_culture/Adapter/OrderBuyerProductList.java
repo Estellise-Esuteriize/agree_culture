@@ -85,10 +85,10 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
                         Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.photo);
 
                         item.name.setText(product.getProductName());
-                        item.quantity.setText(String.format("%s", quantity));
-                        item.price.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, format.format(price)));
+                        item.quantity.setText(item.itemView.getContext().getResources().getString(R.string.buyer_list_quantity, String.format("%s", quantity)));
+                        item.price.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Price", format.format(price)));
 
-                        item.totalPrice.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, format.format(amount)));
+                        item.totalPrice.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Total Price", format.format(amount)));
 
                         item.cancel.setOnClickListener(null);
 
@@ -163,17 +163,15 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
 
             builder.create().show();
 
-
-
         }
 
     }
 
 
+
+
     public interface OnOrderBuyerProducts{
-
         void onCancelOrder(Orders order);
-
     }
 
 }

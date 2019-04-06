@@ -215,10 +215,10 @@ public class ProductsUpdateActivity extends AppCompatActivity {
 
                 progress_bar.setVisibility(View.VISIBLE);
 
-                batch.update(ref, "product_name", prod_name);
-                batch.update(ref, "product_price", prod_price);
-                batch.update(ref, "product_quantity", prod_quantity);
-                batch.update(ref, "product_minimum", prod_minimum);
+                batch.update(ref, "productName", prod_name);
+                batch.update(ref, "productPrice", prod_price);
+                batch.update(ref, "productQuantity", prod_quantity);
+                batch.update(ref, "productMinimum", prod_minimum);
 
 
 
@@ -265,7 +265,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
             WriteBatch batch = mDatabase.batch();
 
             DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollectionId());
-            batch.update(ref, "product_status", Product.PRODUCT_STATUS_ENABLE);
+            batch.update(ref, "productStatus", Product.PRODUCT_STATUS_ENABLE);
 
             batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
@@ -310,7 +310,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
             WriteBatch batch = mDatabase.batch();
 
             DocumentReference ref = mDatabase.collection(GlobalString.PRODUCTS).document(product.getCollectionId());
-            batch.update(ref, "product_status", Product.PRODUCT_STATUS_DISABLED);
+            batch.update(ref, "productStatus", Product.PRODUCT_STATUS_DISABLED);
 
             batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override

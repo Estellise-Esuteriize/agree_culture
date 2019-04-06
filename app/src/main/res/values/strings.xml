@@ -11,6 +11,9 @@
 
     <string name="successfully_delivered">Successfully delivered products</string>
 
+    <string name="delivered_successfully">Successfully delivered products, continue to transfer products</string>
+    <string name="success_product_transferred">Successfully transferred products</string>
+
     <string name="cancel_product">Cancel order product?</string>
     <string name="remove_product">Remove product?</string>
     <string name="cancel_order">Cancel order?</string>
@@ -79,7 +82,7 @@
     <!-- Orders -->
     <string name="menu_order_success_cancel_order">Successfully cancel order</string>
 
-    <string name="order_buyer_product_total_amount">&#8369; : %1$s</string>
+    <string name="order_buyer_product_total_amount">%1$s &#8369; : %2$s</string>
 
     <!-- Main Menu -->
     <!-- Purchase History -->
@@ -195,5 +198,9 @@
     <string name="title_activity_order_buyer_products">OrderBuyerProducts</string>
     <string name="title_activity_delivery_destination_map">Map</string>
 
+
+    <!-- Order Buyer Product List -->
+    <string name="buyer_list_quantity">Quantity %1$s</string>
+    <string name="buyer_list_price">Price : </string>
 
 </resources>
