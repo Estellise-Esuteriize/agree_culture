@@ -54,9 +54,9 @@ public class Product implements Serializable {
 
 
 
-    public String toString(){
-        return "Name : " + productName + " , " + "Price : " + productPrice;
-    }
+    //public String toString(){
+    //    return "Name : " + productName + " , " + "Price : " + productPrice;
+    //}
 
     public String getUserId() {
         return userId;

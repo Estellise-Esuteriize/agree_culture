@@ -168,7 +168,7 @@
     <!-- Recycler view Product List -->
     <string name="main_menu_product_delete_message">Delete this product?</string>
     <string name="main_menu_product_delete_success">Successfully deleted product.</string>
-    <string name="main_menu_product_list_item"><b>PHP :</b> %1$s, \n<b>Quantity : </b>%2$s, \n<b>Minimum : </b>%3$s</string>
+    <string name="main_menu_product_list_item"><b>PHP :</b> %1$s, \n<b>Quantity : </b>%2$s \n<b>Minimum : </b>%3$s</string>
     <string name="title_activity_search_product">SearchProductActivity</string>
 
 
