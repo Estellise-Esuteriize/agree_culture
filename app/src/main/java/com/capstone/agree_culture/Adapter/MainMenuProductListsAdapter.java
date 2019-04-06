@@ -51,7 +51,7 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
         this.onProduct = onProduct;
         this.fragment = fragment;
 
-        format = new DecimalFormat("#,###,###");
+        format = new DecimalFormat("#.00");
 
         mDatabase = FirebaseFirestore.getInstance();
     }

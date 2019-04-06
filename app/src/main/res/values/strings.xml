@@ -104,6 +104,7 @@
         completions."
     </string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="login_empty">Please input email / password</string>
 
     <!-- sign up related -->
     <string name="sign_up_name">Full Name</string>
@@ -186,6 +187,7 @@
     <string name="cart_add_error">Error accessing messaging app</string>
     <string name="cart_add_product_exists">Product already added to orders</string>
     <string name="title_activity_order_buyer_products">OrderBuyerProducts</string>
+    <string name="title_activity_delivery_destination_map">Map</string>
 
 
 </resources>

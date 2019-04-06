@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -109,6 +110,10 @@ public class LoginActivity extends AppCompatActivity{
         final String password = sign_in_password.getText().toString();
 
         progress_bar.setVisibility(View.VISIBLE);
+
+        if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
+            Toast.makeText(this, getResources().getString(R.string.login_empty), Toast.LENGTH_LONG).show();
+        }
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
