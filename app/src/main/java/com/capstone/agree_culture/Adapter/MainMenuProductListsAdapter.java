@@ -80,9 +80,12 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
 
         myViewHolder.product_delete.setOnClickListener(new ProductDelete(product));
 
-        if(Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
+        /**
+         * Distributor can now edit the product
+         */
+        //if(Helper.currentUser.getRole().equals(GlobalString.SUPPLIER)){
             myViewHolder.itemView.setOnClickListener(new ProductUpdate(product));
-        }
+        //}
 
         if(!TextUtils.isEmpty(product.getProductPhoto())){
 

@@ -1,4 +1,4 @@
-package com.capstone.agree_culture.Fragments;
+package com.capstone.agree_culture;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;

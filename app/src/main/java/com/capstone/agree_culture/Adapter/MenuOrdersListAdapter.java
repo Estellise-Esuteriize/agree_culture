@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.capstone.agree_culture.DeliveryDestinationMapActivity;
 import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.OrderBuyerProducts;
 import com.capstone.agree_culture.R;
@@ -70,6 +71,8 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
         myViewHolder.cancel.setOnClickListener(new CancelOrder(myViewHolder.itemView.getContext(), user));
         myViewHolder.itemView.setOnClickListener(new OpenBoughtProducts(myViewHolder.itemView.getContext(), user));
 
+        myViewHolder.deliver.setOnClickListener(new DeliverProducts(myViewHolder.itemView.getContext(), user));
+
     }
 
     @Override
@@ -96,6 +99,26 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
         }
 
     }
+
+   class DeliverProducts implements View.OnClickListener{
+
+        private Context context;
+        private User buyer;
+
+        public DeliverProducts(Context context, User buyer){
+            this.context = context;
+            this.buyer = buyer;
+        }
+
+        @Override
+       public void onClick(View v) {
+
+            Intent intent = new Intent(context, DeliveryDestinationMapActivity.class);
+            intent.putExtra("buyer", buyer);
+            (context).startActivity(intent);
+
+       }
+   }
 
     class OpenBoughtProducts implements View.OnClickListener{
 

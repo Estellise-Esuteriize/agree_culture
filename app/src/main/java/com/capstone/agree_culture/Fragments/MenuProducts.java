@@ -146,7 +146,10 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
             });
         }
 
-        if(currentUser.getRole().equals(GlobalString.SUPPLIER)){
+        /**
+         * Distributor can now add a product
+         */
+        //if(currentUser.getRole().equals(GlobalString.SUPPLIER)){
             float_button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -154,7 +157,7 @@ public class MenuProducts extends Fragment implements MainMenuProductListsAdapte
                     startActivityForResult(intent, ADD_PRODUCT_ID);
                 }
             });
-        }
+        //}
 
     }
 

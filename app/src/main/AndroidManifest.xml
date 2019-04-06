@@ -42,7 +42,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Fragments.DeliveryDestinationMapActivity"
+            android:name=".DeliveryDestinationMapActivity"
             android:label="@string/title_activity_delivery_destination_map"></activity>
         <activity
             android:name=".OrderBuyerProducts"
