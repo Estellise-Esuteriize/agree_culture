@@ -71,7 +71,8 @@
         Total : %3$s
     </string>
     <string name="menu_car_product_plus_limit">Quantity cannot be zero or more than the product left</string>
-
+    <string name="menu_cart_order_success">Successfully ordered products</string>
+    <string name="menu_cart_confirm_order">Order products?</string>
 
     <!-- Main Menu -->
     <!-- Orders -->
@@ -179,7 +180,7 @@
 
 
     <!-- add to orders -->
-    <string name="cart_add_message">Add product to orders?</string>
+    <string name="cart_add_message">Add product to cart?</string>
     <string name="cart_add_quantity_zero">Quantity of the product is lesser than or equal to zero</string>
     <string name="card_add_success">Successfully added product to orders</string>
 
