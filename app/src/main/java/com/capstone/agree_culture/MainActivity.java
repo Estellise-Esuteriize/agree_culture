@@ -35,7 +35,9 @@ import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Fragments.MainMenu;
 import com.capstone.agree_culture.Fragments.MenuMessages;
 import com.capstone.agree_culture.Fragments.MenuMyCart;
+import com.capstone.agree_culture.Fragments.MenuOrders;
 import com.capstone.agree_culture.Fragments.MenuProducts;
+import com.capstone.agree_culture.Fragments.MenuPurchaseHistory;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Messages;
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity
     private MenuMessages messages = new MenuMessages();
     private MenuProducts menu_products = new MenuProducts();
     private MenuMyCart menuMyCart = new MenuMyCart();
+    private MenuOrders menuOrders = new MenuOrders();
+    private MenuPurchaseHistory menuPurchaseHistory = new MenuPurchaseHistory();
 
 
     /**
@@ -278,6 +282,20 @@ public class MainActivity extends AppCompatActivity
             if (mUser != null) {
                 fragment_transaction = getSupportFragmentManager().beginTransaction();
                 fragment_transaction.replace(fragment, menuMyCart);
+                fragment_transaction.commit();
+            }
+        }
+        else if(id == R.id.nav_orders){
+            if (mUser != null) {
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menuOrders);
+                fragment_transaction.commit();
+            }
+        }
+        else if(id == R.id.nav_purchase_history){
+            if (mUser != null) {
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menuPurchaseHistory);
                 fragment_transaction.commit();
             }
         }

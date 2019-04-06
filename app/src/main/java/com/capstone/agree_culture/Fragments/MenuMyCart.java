@@ -179,6 +179,9 @@ public class MenuMyCart extends Fragment implements MenuMyCartListAdapter.OnProd
                     if(task.isSuccessful()){
                         orders = new ArrayList<>();
                         mAdapter.notifyDataSetChanged();
+
+                        
+
                     }
                     else{
                         try{
