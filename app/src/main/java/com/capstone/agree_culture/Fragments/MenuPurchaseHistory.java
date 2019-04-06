@@ -1,9 +1,12 @@
 package com.capstone.agree_culture.Fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +18,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.capstone.agree_culture.Adapter.MenuMyCartListAdapter;
+import com.capstone.agree_culture.Adapter.MenuPurchaseHistoryListAdapter;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Orders;
@@ -31,13 +35,13 @@ import com.google.firebase.firestore.WriteBatch;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MenuPurchaseHistory extends Fragment {
+public class MenuPurchaseHistory extends Fragment implements MenuPurchaseHistoryListAdapter.PurchaseHistoryEvents{
 
 
     private List<Orders> orders = new ArrayList<>();
 
     private RecyclerView recyclerView;
-    private MenuMyCartListAdapter mAdapter;
+    private MenuPurchaseHistoryListAdapter mAdapter;
 
     private View progressBar;
 
@@ -55,7 +59,7 @@ public class MenuPurchaseHistory extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_menu_cart, container, false);
+        return inflater.inflate(R.layout.fragment_menu_purchase_history, container, false);
     }
 
 
@@ -67,21 +71,20 @@ public class MenuPurchaseHistory extends Fragment {
         mDatabase = FirebaseFirestore.getInstance();
 
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.menu_cart_recycler);
+        recyclerView = (RecyclerView) view.findViewById(R.id.menu_purchase_history_recycler);
         progressBar = view.findViewById(R.id.progress_bar);
 
         currentUser = Helper.currentUser;
 
         fragment = this;
 
+        mAdapter = new MenuPurchaseHistoryListAdapter(this, orders);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
 
         if(orders.isEmpty()){
-
-            mAdapter = new MenuMyCartListAdapter(this, orders);
-
 
             /*
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
@@ -101,8 +104,10 @@ public class MenuPurchaseHistory extends Fragment {
                                 Orders order = ref.toObject(Orders.class);
                                 order.setCollectionId(ref.getId());
                                 orders.add(0, order);
-                                mAdapter.notifyItemRangeInserted(0, orders.size());
                             }
+
+                            mAdapter.notifyDataSetChanged();
+
                         }
 
                     }
@@ -207,7 +212,54 @@ public class MenuPurchaseHistory extends Fragment {
     }
 
 
+    @Override
+    public void onCancelOrder(final int index) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.confirm);
+        builder.setTitle(R.string.purchase_history_cancel_order);
+        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                Orders order = orders.get(index);
+
+                mDatabase.collection(GlobalString.ORDERS).document(order.getCollectionId()).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+
+                        if(task.isSuccessful()){
+
+                            Toast.makeText(getContext(), R.string.success_product_remove, Toast.LENGTH_LONG).show();
+
+                            orders.remove(index);
+
+                            mAdapter.notifyItemRemoved(index);
+
+                        }
+                        else {
+                            try{
+                                throw task.getException();
+                            }
+                            catch (Exception ex){
+                                Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
 
 
+                    }
+                });
 
+
+            }
+        });
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        builder.create().show();
+    }
 }

@@ -80,6 +80,10 @@
 
     <string name="order_buyer_product_total_amount">&#8369; : %1$s</string>
 
+    <!-- Main Menu -->
+    <!-- Purchase History -->
+    <string name="purchase_history_cancel_order">Cancel order for this product?</string>
+
     <!-- Home Alert Dialog -->
     <string name="home_photo_title">Photo</string>
     <string name="home_photo_message">Add/Change profile photo?</string>

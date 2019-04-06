@@ -2,7 +2,9 @@ package com.capstone.agree_culture.Adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,20 +26,31 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPurchaseHistoryListAdapter.MyViewHolder> {
 
-    private Context context;
+    private Fragment fragment;
     private List<Orders> orders;
 
     private FirebaseFirestore mDatabase;
 
-    public MenuPurchaseHistoryListAdapter(Context context, List<Orders> orders){
-        this.context = context;
+    private PurchaseHistoryEvents purchaseHistoryEvents;
+
+    public MenuPurchaseHistoryListAdapter(Fragment fragment, List<Orders> orders){
+        this.fragment = fragment;
         this.orders = orders;
 
         mDatabase = FirebaseFirestore.getInstance();
+
+        try{
+            purchaseHistoryEvents = (PurchaseHistoryEvents) fragment;
+        }
+        catch (ClassCastException ex){
+            Log.d("PurchaseHistory", ex.getMessage() + "");
+        }
     }
 
     @NonNull
@@ -49,7 +62,7 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
-        Orders order = orders.get(i);
+        final Orders order = orders.get(i);
 
         final MyViewHolder item = myViewHolder;
         final int index = i;
@@ -66,15 +79,29 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
 
                     Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.productPhoto);
 
-                    item.productStatus.setTextColor(Helper.orderStatusColors(product.getProductStatus()));
-                    item.productStatus.setText(product.getProductStatus());
+                    item.productStatus.setTextColor(Helper.orderStatusColors(order.getStatus()));
+                    item.productStatus.setText(order.getStatus());
+
+                    item.productName.setText(product.getProductName());
 
                     double price = (double)product.getProductMinimum() * product.getProductPrice();
 
                     item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
 
-                    item.productRemove.setOnClickListener(null);
+                    if(order.getStatus().equals(Orders.CANCELED) || order.getStatus().equals(Orders.COMPLETED) || order.getStatus().equals(Orders.DELIVERY)){
+
+                        item.productRemove.setVisibility(View.GONE);
+
+                    }
+                    else{
+
+                        item.productRemove.setOnClickListener(null);
+
+                        item.productRemove.setOnClickListener(new CancelOrderProduct(index));
+
+                    }
+
 
                 }
                 else{
@@ -100,13 +127,14 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
     public class MyViewHolder extends  RecyclerView.ViewHolder{
 
         public ImageView productPhoto, productRemove;
-        public TextView productStatus, productDesc;
+        public TextView productStatus, productDesc, productName;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
             productPhoto = (ImageView) itemView.findViewById(R.id.menu_cart_photo);
             productStatus = (TextView) itemView.findViewById(R.id.menu_cart_status);
+            productName = (TextView) itemView.findViewById(R.id.menu_cart_product_name);
             productDesc = (TextView) itemView.findViewById(R.id.menu_cart_desc);
             productRemove = (ImageView) itemView.findViewById(R.id.menu_cart_delete);
 
@@ -115,6 +143,27 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
     }
 
 
+    class CancelOrderProduct implements View.OnClickListener{
+
+        int index;
+
+        public CancelOrderProduct(int index){
+            this.index = index;
+        }
+
+        @Override
+        public void onClick(View v) {
+            purchaseHistoryEvents.onCancelOrder(index);
+        }
+
+    }
+
+
+    public interface PurchaseHistoryEvents{
+
+        public void onCancelOrder(int index);
+
+    }
 
 
 }
