@@ -111,10 +111,14 @@ public class ProductsUpdateActivity extends AppCompatActivity {
 
         product_price.addTextChangedListener(new PriceCurrencyFormat());
 
+        /**
+         * Disable Product Quantity
+         */
+        /*
         if(currentUser.getRole().equals(GlobalString.DISTRIBUTOR)){
             product_quantity.getBackground().setAlpha(64);
             product_quantity.setEnabled(false);
-        }
+        }*/
 
         if(product.getProductStatus().equals(Product.PRODUCT_STATUS_ENABLE)){
             enable.getBackground().setAlpha(64);
@@ -199,11 +203,27 @@ public class ProductsUpdateActivity extends AppCompatActivity {
                 product_price.setError(getResources().getString(R.string.product_create_number_error, "Price"));
                 has_error = true;
             }
-
+            /**
+             * Product Quantity
+             *  - Start
+             * Use the code below if distributor quantity is to be disable
+             */
+            /*
             if (prod_quantity <= 0 && currentUser.getRole().equals(GlobalString.SUPPLIER)) {
                 product_quantity.setError(getResources().getString(R.string.product_create_number_error, "Quantity"));
                 has_error = true;
             }
+            */
+            /**
+             * Use the code below if distributor quantity is to be enable
+             */
+            if (prod_quantity <= 0) {
+                product_quantity.setError(getResources().getString(R.string.product_create_number_error, "Quantity"));
+                has_error = true;
+            }
+            /**
+             * End
+             */
 
             if (prod_minimum <= 0) {
                 product_minimum.setError(getResources().getString(R.string.product_create_number_error, "Minimum"));

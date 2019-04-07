@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +63,9 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
-        final Orders order = orders.get(i);
+        Orders order = orders.get(i);
+        final Orders fOrders = order;
+
 
         final MyViewHolder item = myViewHolder;
         final int index = i;
@@ -73,14 +76,16 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if(task.isSuccessful()){
+                if(task.isSuccessful() && task.getResult().exists()){
 
                     Product product = task.getResult().toObject(Product.class);
 
+                    product.setCollectionId(task.getResult().getId());
+
                     Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.productPhoto);
 
-                    item.productStatus.setTextColor(Helper.orderStatusColors(order.getStatus()));
-                    item.productStatus.setText(order.getStatus());
+                    item.productStatus.setTextColor(Helper.orderStatusColors(fOrders.getStatus()));
+                    item.productStatus.setText(fOrders.getStatus());
 
                     item.productName.setText(product.getProductName());
 
@@ -89,7 +94,7 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
                     item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
 
-                    if(order.getStatus().equals(Orders.CANCELED) || order.getStatus().equals(Orders.COMPLETED) || order.getStatus().equals(Orders.DELIVERY)){
+                    if(fOrders.getStatus().equals(Orders.CANCELED) || fOrders.getStatus().equals(Orders.COMPLETED) || fOrders.getStatus().equals(Orders.DELIVERY)){
 
                         item.productRemove.setVisibility(View.GONE);
 
@@ -105,10 +110,12 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
 
                 }
                 else{
-                    try{
-                        throw task.getException();
-                    }catch (Exception ex){
-                        Toast.makeText(item.itemView.getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                    if(!task.isSuccessful()){
+                        try{
+                            throw task.getException();
+                        }catch (Exception ex){
+                            Toast.makeText(item.itemView.getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
 

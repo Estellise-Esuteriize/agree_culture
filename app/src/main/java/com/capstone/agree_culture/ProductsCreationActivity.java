@@ -142,10 +142,15 @@ public class ProductsCreationActivity extends AppCompatActivity {
 
         productImageView.setOnClickListener(new ProductPhoto());
 
+        /**
+         * Enable product quantity in distributor
+         */
+        /*
         if(!currentUser.getRole().equals(GlobalString.SUPPLIER)){
             product_quantity.getBackground().setAlpha(64);
             product_quantity.setEnabled(false);
         }
+        */
 
 
     }
@@ -172,9 +177,10 @@ public class ProductsCreationActivity extends AppCompatActivity {
                 prod_quantity = 0;
                 prod_minimum = 0;
 
-                if(!currentUser.getRole().equals(GlobalString.DISTRIBUTOR)){
+                //if(!currentUser.getRole().equals(GlobalString.DISTRIBUTOR)){
                     prod_quantity = Integer.parseInt(product_quantity.getText().toString());
-                }
+                //}
+
                 if(!TextUtils.isEmpty(product_minimum.getText().toString())){
                     prod_minimum = Integer.parseInt(product_minimum.getText().toString());
                 }

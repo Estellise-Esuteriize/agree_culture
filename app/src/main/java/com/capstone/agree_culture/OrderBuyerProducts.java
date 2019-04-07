@@ -43,6 +43,8 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
     private List<Orders> orders = new ArrayList<>();
     private List<Product> products = new ArrayList<>();
 
+    private List<QuantityHolderDeductor> quants = new ArrayList<>();
+
     private View progressBar;
     private RecyclerView recyclerView;
 
@@ -151,6 +153,15 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                                 DecimalFormat format = new DecimalFormat("#,###.00");
 
                                                 total.setText(getResources().getString(R.string.order_buyer_product_total_amount, "",format.format(totalAmount)));
+
+
+                                                QuantityHolderDeductor quan = new QuantityHolderDeductor();
+                                                quan.setProductUidRef(product.getCollectionId());
+                                                quan.setOrderedQuantity(fOrder.getProductQuantity());
+                                                quan.setCurrentQuantity(product.getProductQuantity());
+
+                                                quants.add(quan);
+
                                             }
 
 
@@ -303,30 +314,122 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                              if(task.isSuccessful()){
 
                                  Toast.makeText(getApplicationContext(), R.string.success_product_transferred, Toast.LENGTH_SHORT).show();
+                                 total.setText(getResources().getString(R.string.order_buyer_product_total_amount, "", "0"));
 
-                                 for(Product product : products){
+                                 for(final Product product : products){
 
-                                     mDatabase.collection(GlobalString.PRODUCTS).add(product).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                     mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("productName", product.getProductName()).whereEqualTo("userId", product.getUserId()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                          @Override
-                                         public void onComplete(@NonNull Task<DocumentReference> task) {
-                                             if(!task.isSuccessful()){
+                                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                                             if(task.isSuccessful()){
+
+                                                Log.d("Status", "Check if have the same product");
+
+                                                 if(!task.getResult().isEmpty()){
+
+                                                     Log.d("Status", "Result is not empty");
+
+                                                     for(DocumentSnapshot snapshot : task.getResult()){
+
+                                                         Product prod = snapshot.toObject(Product.class);
+                                                         prod.setCollectionId(snapshot.getId());
+
+                                                         WriteBatch batch_a = mDatabase.batch();
+
+                                                         DocumentReference ref_a = mDatabase.collection(GlobalString.PRODUCTS).document(prod.getCollectionId());
+                                                         batch_a.update(ref_a, "productQuantity", prod.getProductQuantity() + product.getProductQuantity());
+
+                                                         Log.d("StatusUserId", prod.getUserId());
+                                                         Log.d("StatusQuantity", prod.getProductQuantity() + "");
+                                                         Log.d("StatusProdCollectionId", prod.getCollectionId());
+
+                                                         batch_a.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                             @Override
+                                                             public void onComplete(@NonNull Task<Void> task) {
+
+                                                                 Log.d("Status", "Quantity Updated");
+
+                                                                 if(!task.isSuccessful()){
+                                                                     try{
+                                                                         throw task.getException();
+                                                                     }
+                                                                     catch (Exception ex){
+                                                                         Log.d("Batch A", ex.getMessage() + "");
+                                                                     }
+                                                                 }
+                                                             }
+                                                         });
+
+
+                                                     }
+
+                                                 }
+                                                 else{
+
+                                                     mDatabase.collection(GlobalString.PRODUCTS).add(product).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                                         @Override
+                                                         public void onComplete(@NonNull Task<DocumentReference> task) {
+                                                             if(!task.isSuccessful()){
+                                                                 try{
+                                                                     throw task.getException();
+                                                                 }
+                                                                 catch (Exception ex){
+                                                                     Log.d("Transfer Product", ex.getMessage() + "");
+                                                                 }
+                                                             }
+                                                         }
+                                                     });
+
+                                                 }
+
+                                             }
+                                             else{
                                                  try{
                                                      throw task.getException();
                                                  }
                                                  catch (Exception ex){
-                                                     Log.d("Transfer Product", ex.getMessage() + "");
+                                                     Log.d("UpdateQuantityProduct", ex.getMessage() + "");
                                                  }
                                              }
+
                                          }
                                      });
+
 
                                  }
 
                                  orders.clear();
                                  mAdapter.notifyDataSetChanged();
 
-                                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                                 progressBar.setVisibility(View.GONE);
+
+                                 WriteBatch batchQuant = mDatabase.batch();
+
+                                 for (QuantityHolderDeductor quant : quants){
+
+                                     DocumentReference refQuant = mDatabase.collection(GlobalString.PRODUCTS).document(quant.productUidRef);
+                                     batchQuant.update(refQuant, "productQuantity", quant.getCurrentQuantity() - quant.getOrderedQuantity());
+
+                                 }
+
+                                 batchQuant.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                     @Override
+                                     public void onComplete(@NonNull Task<Void> task) {
+
+                                         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                                         progressBar.setVisibility(View.GONE);
+
+                                         if(!task.isSuccessful()){
+                                             try{
+                                                throw task.getException();
+                                             }
+                                             catch (Exception ex){
+                                                 Log.d("QuantityDeduction", ex.getMessage() + "");
+                                             }
+                                         }
+
+                                     }
+                                 });
 
                              }
                              else{
@@ -340,7 +443,6 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                      Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
                                  }
                              }
-
 
                          }
                      });
@@ -361,6 +463,35 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
          }
      }
 
+    class QuantityHolderDeductor {
 
+        private String productUidRef;
+        private int currentQuantity;
+        private int orderedQuantity;
+
+        public String getProductUidRef() {
+            return productUidRef;
+        }
+
+        public void setProductUidRef(String productUidRef) {
+            this.productUidRef = productUidRef;
+        }
+
+        public int getCurrentQuantity() {
+            return currentQuantity;
+        }
+
+        public void setCurrentQuantity(int currentQuantity) {
+            this.currentQuantity = currentQuantity;
+        }
+
+        public int getOrderedQuantity() {
+            return orderedQuantity;
+        }
+
+        public void setOrderedQuantity(int orderedQuantity) {
+            this.orderedQuantity = orderedQuantity;
+        }
+    }
 
 }

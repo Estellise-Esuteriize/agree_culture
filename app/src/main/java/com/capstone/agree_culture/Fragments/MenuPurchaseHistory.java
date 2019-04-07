@@ -135,8 +135,9 @@ public class MenuPurchaseHistory extends Fragment implements MenuPurchaseHistory
                                 Orders order = ref.toObject(Orders.class);
                                 order.setCollectionId(ref.getId());
                                 orders.add(0, order);
-                                mAdapter.notifyItemRangeInserted(0, orders.size());
                             }
+
+                            mAdapter.notifyDataSetChanged();
                         }
                     }
                     else{
@@ -163,8 +164,10 @@ public class MenuPurchaseHistory extends Fragment implements MenuPurchaseHistory
                                 Orders order = ref.toObject(Orders.class);
                                 order.setCollectionId(ref.getId());
                                 orders.add(order);
-                                mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
+
                             }
+
+                            mAdapter.notifyDataSetChanged();
                         }
 
                     }
@@ -191,8 +194,9 @@ public class MenuPurchaseHistory extends Fragment implements MenuPurchaseHistory
                                 Orders order = ref.toObject(Orders.class);
                                 order.setCollectionId(ref.getId());
                                 orders.add(order);
-                                mAdapter.notifyItemRangeInserted(orders.size() - 1, orders.size());
                             }
+
+                            mAdapter.notifyDataSetChanged();
                         }
                     }
                     else{
