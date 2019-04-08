@@ -401,7 +401,12 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
             }
 
 // Drawing polyline in the Google Map for the i-th route
-            mMap.addPolyline(lineOptions);
+            if(lineOptions != null){
+                mMap.addPolyline(lineOptions);
+            }
+            else{
+                Toast.makeText(getApplicationContext(), R.string.no_directions, Toast.LENGTH_LONG).show();
+            }
         }
     }
 
@@ -414,12 +419,14 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         // Destination of route
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
 
+        String key = "key=" + Helper.API_GOOGLE_GEO;
+
         // Sensor enabled
         String sensor = "sensor=false";
         String mode = "mode=driving";
 
         // Building the parameters to the web service
-        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + key + "&" + mode;
 
         // Output format
         String output = "json";

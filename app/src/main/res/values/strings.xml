@@ -24,6 +24,8 @@
 
     <string name="no_initial_destination">Bought address not found</string>
 
+    <string name="no_directions">No directions / routes can be found</string>
+
     <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
