@@ -43,7 +43,8 @@
 
         <activity
             android:name=".DeliveryDestinationMapActivity"
-            android:label="@string/title_activity_delivery_destination_map"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_delivery_destination_map"/>
         <activity
             android:name=".OrderBuyerProducts"
             android:label="@string/title_activity_order_buyer_products"

@@ -13,6 +13,8 @@ public class Helper {
 
     public static final String ITEXMO_API = "TR-AGREE350631_91W3C";
 
+    public static final String API_GOOGLE_GEO = "AIzaSyBCXGVFnN4GANxHUo4E90Q3gOhcZgE8reo";
+
     public static Boolean isFirestoreSettingsInitialize = false;
 
     public static User currentUser = null;
@@ -20,6 +22,7 @@ public class Helper {
     public static List<Orders> newOrder = null;
 
     public static List<Messages> newMessage = null;
+
 
 
     /**

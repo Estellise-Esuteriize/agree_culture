@@ -1,15 +1,22 @@
 package com.capstone.agree_culture;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.R;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
@@ -24,6 +31,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+
+import java.util.Arrays;
 
 public class DeliveryDestinationMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -38,16 +52,37 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
 
-    private boolean requestingLocationUpdates;
+    private LatLng oldPosition;
+
+    private ImageButton targetPosition;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_destination_map);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        //Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+
+        targetPosition = (ImageButton) findViewById(R.id.destination_map_target_position);
+
+
+        if(!Places.isInitialized()){
+            Places.initialize(this, "AIzaSyBCXGVFnN4GANxHUo4E90Q3gOhcZgE8reo");
+        }
+
+        PlacesClient placesClient = Places.createClient(this);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+
         mapFragment.getMapAsync(this);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -55,6 +90,12 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(20 * 1000);
+
+
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelection());
+        targetPosition.setOnClickListener(new TargetPosition());
+
 
         locationCallback = new LocationCallback() {
             @Override
@@ -69,13 +110,19 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
                         if(mMap != null){
 
-
                             LatLng lang = new LatLng(location.getLatitude(), location.getLongitude());
 
+                            oldPosition = lang;
+
                             if(deliveryCar != null){
+
+                                Log.d("StatusLocationUpdate", "Updating Location");
+
                                 deliveryCar.setPosition(lang);
 
-                                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lang, 16.2f));
+                                //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(lang, 16.2f));
+
+                                mMap.moveCamera(CameraUpdateFactory.newLatLng(lang));
 
                             }
 
@@ -89,7 +136,6 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
                 super.onLocationAvailability(locationAvailability);
             }
         };
-
 
     }
 
@@ -127,14 +173,20 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        Log.d("StatusMapReady", "Map is ready");
+
         mMap = googleMap;
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
 
         deliveryCar = mMap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car)));
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16.2f));
+
     }
 
     @Override
@@ -153,4 +205,30 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+
+    class PlaceSelection implements PlaceSelectionListener{
+        @Override
+        public void onPlaceSelected(@NonNull Place place) {
+
+        }
+
+        @Override
+        public void onError(@NonNull Status status) {
+
+        }
+    }
+
+    class TargetPosition implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+
+            if(deliveryCar != null && oldPosition != null){
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(oldPosition, 16.2f));
+            }
+
+        }
+    }
+
 }
