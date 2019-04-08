@@ -257,7 +257,15 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
     private void changeDestinationMaker(LatLng latLng){
 
-        destinationMarker.setPosition(latLng);
+        destination = latLng;
+
+        BitmapDescriptor destMarkerColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+
+        if(destinationMarker == null){
+            destinationMarker = mMap.addMarker(new MarkerOptions().position(destination).icon(destMarkerColor));
+        }
+
+        destinationMarker.setPosition(destination);
 
         String url = getDirectionsUrl(oldPosition, destination);
 
