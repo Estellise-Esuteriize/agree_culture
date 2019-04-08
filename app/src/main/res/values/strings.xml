@@ -22,6 +22,8 @@
     <string name="totalAmount">Total Amount</string>
     <string name="delivered">Delivered</string>
 
+    <string name="no_initial_destination">Bought address not found</string>
+
     <!-- Drawer Layout Nav -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

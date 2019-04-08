@@ -3,8 +3,12 @@ package com.capstone.agree_culture;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -14,7 +18,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.capstone.agree_culture.CustomClass.DirectionsJSONParser;
 import com.capstone.agree_culture.Helper.Helper;
+import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -27,23 +33,41 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 public class DeliveryDestinationMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
 
+    private Geocoder geocoder;
+
     private Marker deliveryCar;
+    private Marker destinationMarker;
+
 
     private final int REQUEST_LOCATION_PERMISSION = 101;
 
@@ -53,8 +77,13 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
     private LocationCallback locationCallback;
 
     private LatLng oldPosition;
+    private LatLng destination;
 
     private ImageButton targetPosition;
+
+    private List<Address> addresses = new ArrayList<>();
+
+    private User buyer;
 
 
     @Override
@@ -74,23 +103,24 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         targetPosition = (ImageButton) findViewById(R.id.destination_map_target_position);
 
 
+        buyer = (User) getIntent().getSerializableExtra("buyer");
+
+
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+
         if(!Places.isInitialized()){
             Places.initialize(this, "AIzaSyBCXGVFnN4GANxHUo4E90Q3gOhcZgE8reo");
         }
 
-        PlacesClient placesClient = Places.createClient(this);
-
         // Specify the types of place data to return.
-        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
-
-        mapFragment.getMapAsync(this);
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS));
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(20 * 1000);
-
 
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelection());
@@ -137,6 +167,9 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
             }
         };
 
+
+        mapFragment.getMapAsync(this);
+
     }
 
 
@@ -178,14 +211,60 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
         mMap = googleMap;
 
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+
+        BitmapDescriptor destMarkerColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
+        BitmapDescriptor delvMarkerColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
 
-        deliveryCar = mMap.addMarker(new MarkerOptions().position(sydney).icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_directions_car)));
+        deliveryCar = mMap.addMarker(new MarkerOptions().position(sydney).icon(delvMarkerColor));
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16.2f));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 8.2f));
+
+
+        try {
+            addresses = geocoder.getFromLocationName(buyer.getAddress(), 1);
+
+            if(addresses.size() > 0){
+
+                Address address = addresses.get(0);
+
+                destination = new LatLng(address.getLatitude(), address.getLongitude());
+            }
+            else{
+                Toast.makeText(this, R.string.no_initial_destination, Toast.LENGTH_LONG).show();
+            }
+
+        } catch (IOException e) {
+
+
+            Toast.makeText(this, R.string.no_initial_destination, Toast.LENGTH_LONG).show();
+
+            e.printStackTrace();
+        }
+
+
+        if(destination != null){
+
+            destinationMarker = mMap.addMarker(new MarkerOptions().position(destination).icon(destMarkerColor));
+
+        }
+
+
+    }
+
+    private void changeDestinationMaker(LatLng latLng){
+
+        destinationMarker.setPosition(latLng);
+
+        String url = getDirectionsUrl(oldPosition, destination);
+
+        DownloadTask downloadTask = new DownloadTask();
+
+        // Start downloading json data from Google Directions API
+        downloadTask.execute(url);
 
     }
 
@@ -210,6 +289,8 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
     class PlaceSelection implements PlaceSelectionListener{
         @Override
         public void onPlaceSelected(@NonNull Place place) {
+            Log.d("StatusGeocoderPlace", place.getAddress() + place.getName() + place.getLatLng() + "");
+            changeDestinationMaker(place.getLatLng());
 
         }
 
@@ -229,6 +310,152 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
             }
 
         }
+    }
+
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            String data = "";
+
+            try {
+                data = downloadUrl(url[0]);
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+
+            parserTask.execute(result);
+
+        }
+    }
+
+    /**
+     * A class to parse the Google Places in JSON format
+     */
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+                DirectionsJSONParser parser = new DirectionsJSONParser();
+
+                routes = parser.parse(jObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList points = null;
+            PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            for (int i = 0; i < result.size(); i++) {
+                points = new ArrayList();
+                lineOptions = new PolylineOptions();
+
+                List<HashMap<String, String>> path = result.get(i);
+
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                lineOptions.addAll(points);
+                lineOptions.width(12);
+                lineOptions.color(Color.RED);
+                lineOptions.geodesic(true);
+
+            }
+
+// Drawing polyline in the Google Map for the i-th route
+            mMap.addPolyline(lineOptions);
+        }
+    }
+
+
+    private String getDirectionsUrl(LatLng origin, LatLng dest) {
+
+        // Origin of route
+        String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
+
+        // Destination of route
+        String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
+
+        // Sensor enabled
+        String sensor = "sensor=false";
+        String mode = "mode=driving";
+
+        // Building the parameters to the web service
+        String parameters = str_origin + "&" + str_dest + "&" + sensor + "&" + mode;
+
+        // Output format
+        String output = "json";
+
+        // Building the url to the web service
+        String url = "https://maps.googleapis.com/maps/api/directions/" + output + "?" + parameters;
+
+
+        return url;
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try {
+            URL url = new URL(strUrl);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.connect();
+
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        } catch (Exception e) {
+            Log.d("Exception", e.toString());
+        } finally {
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
     }
 
 }
