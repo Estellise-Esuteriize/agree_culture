@@ -113,6 +113,8 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
         @Override
        public void onClick(View v) {
 
+            onOrderClick.onDeliverOrder(buyer);
+
             Intent intent = new Intent(context, DeliveryDestinationMapActivity.class);
             intent.putExtra("buyer", buyer);
             (context).startActivity(intent);
@@ -133,7 +135,6 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
 
         @Override
         public void onClick(View v) {
-
             Intent intent = new Intent(context, OrderBuyerProducts.class);
             intent.putExtra("buyer", user);
             (context).startActivity(intent);
@@ -179,7 +180,7 @@ public class MenuOrdersListAdapter extends RecyclerView.Adapter<MenuOrdersListAd
 
     public interface OnOrderClick{
         void onCancelOrder(User user);
-        void onItemClick(User user);
+        void onDeliverOrder(User user);
     }
 
 

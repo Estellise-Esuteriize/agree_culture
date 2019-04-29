@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
 
 
     private List<User> buyers = new ArrayList<>();
+    private List<Orders> orders = new ArrayList<>();
+
 
     private RecyclerView recyclerView;
     private MenuOrdersListAdapter mAdapter;
@@ -57,6 +60,8 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
 
         progressBar = view.findViewById(R.id.progress_bar);
         recyclerView = (RecyclerView) view.findViewById(R.id.menu_order_recycler);
+
+        buyers.clear();
 
 
         mAdapter = new MenuOrdersListAdapter(this, buyers);
@@ -88,10 +93,14 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
                         for(DocumentSnapshot item : task.getResult()){
 
                             Orders order = item.toObject(Orders.class);
+                            order.setCollectionId(item.getId());
+
 
                             if(!order.getStatus().equals(Orders.ORDER) && !order.getStatus().equals(Orders.DELIVERY)){
                                 continue;
                             }
+
+                            orders.add(order);
 
                             ownerUuid.add(order.getProductBuyerUidRef());
 
@@ -114,7 +123,7 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
 
                                             buyers.add(user);
 
-                                            mAdapter.notifyItemRangeInserted(buyers.size() - 1, buyers.size());
+                                            mAdapter.notifyDataSetChanged();
 
                                         }
 
@@ -241,7 +250,28 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
     }
 
     @Override
-    public void onItemClick(User user) {
+    public void onDeliverOrder(User user) {
+
+
+        String orderUidRef = "";
+
+        for(Orders order : orders){
+
+            if(order.getProductBuyerUidRef().equals(user.getDocumentId())){
+                orderUidRef = order.getCollectionId();
+            }
+
+        }
+
+        Log.d("StringUUIDREF", orderUidRef);
+
+        WriteBatch batch = mDatabase.batch();
+        DocumentReference ref = mDatabase.collection(GlobalString.ORDERS).document(orderUidRef);
+
+        batch.update(ref, "status", Orders.DELIVERY);
+
+        batch.commit();
+
 
     }
 }

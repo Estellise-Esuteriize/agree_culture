@@ -109,7 +109,7 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
 
                         }
 
-                        if(product.getProductStatus().equals(Orders.DELIVERY)){
+                        if(fOrders.getStatus().equals(Orders.DELIVERY)){
                             item.itemView.setOnClickListener(new ViewDelivery(item.itemView.getContext(), fOrders.getProductOwnerUidRef(), fOrders.getProductBuyerUidRef()));
                         }
 

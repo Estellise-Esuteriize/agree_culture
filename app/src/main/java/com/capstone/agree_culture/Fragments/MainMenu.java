@@ -108,10 +108,14 @@ public class MainMenu extends Fragment {
             home_supplier.setEnabled(false);
             home_supplier.getBackground().setAlpha(64);
             home_supplier.getResources().getDrawable(R.drawable.ic_menu_manage).setAlpha(64);
+            home_supplier.setVisibility(View.INVISIBLE);
 
             home_distibutor.setEnabled(false);
             home_distibutor.getBackground().setAlpha(64);
             home_distibutor.getResources().getDrawable(R.drawable.ic_menu_camera).setAlpha(64);
+            home_distibutor.setVisibility(View.INVISIBLE);
+
+            home_search.setVisibility(View.GONE);
 
 
         }

@@ -254,7 +254,7 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
 
-        deliveryCar = mMap.addMarker(new MarkerOptions().position(sydney).icon(delvMarkerColor));
+        deliveryCar = mMap.addMarker(new MarkerOptions().position(sydney).title("Delivery").icon(delvMarkerColor));
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(sydney, 8.2f));
 
@@ -283,7 +283,7 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
         if(destination != null){
 
-            destinationMarker = mMap.addMarker(new MarkerOptions().position(destination).icon(destMarkerColor));
+            destinationMarker = mMap.addMarker(new MarkerOptions().position(destination).title("Destination").icon(destMarkerColor));
 
         }
 
@@ -375,8 +375,8 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
             WriteBatch batch = mDatabase.batch();
             DocumentReference ref = mDatabase.collection(GlobalString.DELIVERY).document(delivery.getDocumentId());
 
-            batch.update(ref, delivery.stringDeliveryLat(), destLat);
-            batch.update(ref, delivery.stringDeliveryLong(), destLong);
+            batch.update(ref, delivery.stringDestinationLat(), destLat);
+            batch.update(ref, delivery.stringDestinationLong(), destLong);
 
             batch.commit();
         }
