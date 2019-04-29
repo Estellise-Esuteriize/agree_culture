@@ -2,13 +2,11 @@ package com.capstone.agree_culture;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -24,7 +22,6 @@ import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Delivery;
 import com.capstone.agree_culture.Model.User;
-import com.capstone.agree_culture.R;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationAvailability;
@@ -46,7 +43,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.firestore.DocumentReference;
@@ -185,8 +181,8 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
                                 WriteBatch batch = mDatabase.batch();
                                 DocumentReference ref = mDatabase.collection(GlobalString.DELIVERY).document(delivery.getDocumentId());
 
-                                batch.update(ref, delivery.getStringDeliveryLat(), lang.latitude);
-                                batch.update(ref, delivery.getStringDeliveryLong(), lang.longitude);
+                                batch.update(ref, delivery.stringDeliveryLat(), lang.latitude);
+                                batch.update(ref, delivery.stringDeliveryLong(), lang.longitude);
 
                                 batch.commit();
 
@@ -292,7 +288,7 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         }
 
 
-        mDatabase.collection(GlobalString.DELIVERY).whereEqualTo(delivery.getStringOwnerProductUuid(), currentUser.getDocumentId()).whereEqualTo(delivery.getStringBuyerProductUuid(), currentUser.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        mDatabase.collection(GlobalString.DELIVERY).whereEqualTo(delivery.stringOwnerProductUuid(), currentUser.getDocumentId()).whereEqualTo(delivery.stringBuyerProductUuid(), buyer.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
@@ -301,19 +297,20 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
                     int item = 0;
                     int limit = 0;
 
+                    if(task.getResult().isEmpty()){
+                        setDeliveryData();
+                        return;
+                    }
+
                     for(DocumentSnapshot snapshot : task.getResult()){
 
                         if(item > limit){
                             break;
                         }
 
-                        if(snapshot.exists()){
-                            delivery = (Delivery) snapshot.toObject(Delivery.class);
-                            delivery.setDocumentId(snapshot.getId());
-                        }
-                        else{
-                            setDeliveryData();
-                        }
+                        delivery = (Delivery) snapshot.toObject(Delivery.class);
+                        delivery.setDocumentId(snapshot.getId());
+
                         item++;
                     }
                 }
@@ -378,9 +375,8 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
             WriteBatch batch = mDatabase.batch();
             DocumentReference ref = mDatabase.collection(GlobalString.DELIVERY).document(delivery.getDocumentId());
 
-            batch.update(ref, delivery.getStringDeliveryLat(), destLat);
-
-            batch.update(ref, delivery.getStringDestinationLong(), destLong);
+            batch.update(ref, delivery.stringDeliveryLat(), destLat);
+            batch.update(ref, delivery.stringDeliveryLong(), destLong);
 
             batch.commit();
         }

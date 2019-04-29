@@ -9,8 +9,7 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- To access Google+ APIs: -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -42,9 +41,12 @@
             android:value="@string/google_maps_key" />
 
         <activity
+            android:name=".DeliveryOwnerMapActivity"
+            android:label="@string/title_activity_delivery_owner_map"/>
+        <activity
             android:name=".DeliveryDestinationMapActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:label="@string/title_activity_delivery_destination_map"/>
+            android:label="@string/title_activity_delivery_destination_map"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".OrderBuyerProducts"
             android:label="@string/title_activity_order_buyer_products"

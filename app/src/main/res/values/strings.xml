@@ -6,6 +6,11 @@
     <string name="product">Product</string>
     <string name="confirm">Confirm</string>
 
+
+    <string name="something_went_wrong">Something went wrong.</string>
+
+    <string name="error">Error</string>
+
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
 
@@ -219,11 +224,14 @@
     <string name="cart_add_error">Error accessing messaging app</string>
     <string name="cart_add_product_exists">Product already added to orders</string>
     <string name="title_activity_order_buyer_products">OrderBuyerProducts</string>
+
     <string name="title_activity_delivery_destination_map">Map</string>
 
 
     <!-- Order Buyer Product List -->
     <string name="buyer_list_quantity">Quantity %1$s</string>
     <string name="buyer_list_price">Price : </string>
+
+    <string name="title_activity_delivery_owner_map">Map</string>
 
 </resources>

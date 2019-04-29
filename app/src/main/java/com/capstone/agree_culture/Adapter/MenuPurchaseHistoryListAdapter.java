@@ -1,6 +1,7 @@
 package com.capstone.agree_culture.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.capstone.agree_culture.DeliveryOwnerMapActivity;
 import com.capstone.agree_culture.Fragments.MenuPurchaseHistory;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
@@ -107,6 +109,10 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
 
                         }
 
+                        if(product.getProductStatus().equals(Orders.DELIVERY)){
+                            item.itemView.setOnClickListener(new ViewDelivery(item.itemView.getContext(), fOrders.getProductOwnerUidRef(), fOrders.getProductBuyerUidRef()));
+                        }
+
                     }
                     else{
                         item.productStatus.setText(R.string.product_deleted);
@@ -127,6 +133,8 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
 
             }
         });
+
+
 
 
     }
@@ -166,6 +174,34 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
         @Override
         public void onClick(View v) {
             purchaseHistoryEvents.onCancelOrder(index);
+        }
+
+    }
+
+    class ViewDelivery implements View.OnClickListener{
+
+        private String ownerUuidRef;
+        private String buyerUuidRef;
+
+        private Context context;
+
+
+        ViewDelivery(Context context, String ownerUuidRef, String buyerUuidRef){
+            this.context = context;
+            this.ownerUuidRef = ownerUuidRef;
+            this.buyerUuidRef = buyerUuidRef;
+        }
+
+        @Override
+        public void onClick(View v) {
+
+            Intent intent = new Intent(context, DeliveryOwnerMapActivity.class);
+
+            intent.putExtra("ownerUidRef", ownerUuidRef);
+            intent.putExtra("buyerUidRef", buyerUuidRef);
+
+            context.startActivity(intent);
+
         }
 
     }

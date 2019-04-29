@@ -38,31 +38,31 @@ public class Delivery {
     }
 
 
-    public String getStringCollection(){
+    public String stringCollection(){
         return "documentId";
     }
 
-    public String getStringBuyerProductUuid(){
+    public String stringBuyerProductUuid(){
         return "buyerProductUuid";
     }
 
-    public String getStringOwnerProductUuid(){
+    public String stringOwnerProductUuid(){
         return "ownerProductUuid";
     }
 
-    public String getStringDestinationLat(){
+    public String stringDestinationLat(){
         return "destinationLat";
     }
 
-    public String getStringDestinationLong(){
+    public String stringDestinationLong(){
         return "destinationLong";
     }
 
-    public String getStringDeliveryLat(){
+    public String stringDeliveryLat(){
         return "deliveryLat";
     }
 
-    public String getStringDeliveryLong(){
+    public String stringDeliveryLong(){
         return "deliveryLong";
     }
 

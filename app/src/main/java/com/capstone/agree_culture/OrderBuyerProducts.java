@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -22,6 +20,7 @@ import android.widget.Toast;
 import com.capstone.agree_culture.Adapter.OrderBuyerProductList;
 import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
+import com.capstone.agree_culture.Model.Delivery;
 import com.capstone.agree_culture.Model.Orders;
 import com.capstone.agree_culture.Model.Product;
 import com.capstone.agree_culture.Model.User;
@@ -58,6 +57,8 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
     private User buyer;
 
 
+    private Delivery delivery;
+
     private double totalAmount = 0;
 
     private Context context;
@@ -85,6 +86,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
         buyer = (User) getIntent().getSerializableExtra("buyer");
 
+        delivery = new Delivery();
 
         mDatabase = FirebaseFirestore.getInstance();
 
@@ -318,6 +320,29 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                  Toast.makeText(getApplicationContext(), R.string.success_product_transferred, Toast.LENGTH_SHORT).show();
                                  total.setText(getResources().getString(R.string.order_buyer_product_total_amount, "", "0"));
 
+
+                                 mDatabase.collection(GlobalString.DELIVERY).whereEqualTo(delivery.stringOwnerProductUuid(), Helper.currentUser.getDocumentId()).whereEqualTo(delivery.stringBuyerProductUuid(), buyer.getDocumentId()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                     @Override
+                                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if(task.isSuccessful()){
+                                            if(!task.getResult().isEmpty()){
+                                                for(DocumentSnapshot snapshot : task.getResult()){
+                                                    mDatabase.collection(GlobalString.DELIVERY).document(snapshot.getId()).delete();
+                                                }
+                                            }
+                                        }
+                                        else{
+                                            try{
+                                                throw task.getException();
+                                            }
+                                            catch (Exception ex){
+                                                ex.printStackTrace();
+                                            }
+                                        }
+                                     }
+                                 });
+
+                                 
                                  for(final Product product : products){
 
                                      mDatabase.collection(GlobalString.PRODUCTS).whereEqualTo("productName", product.getProductName()).whereEqualTo("userId", product.getUserId()).limit(1).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
