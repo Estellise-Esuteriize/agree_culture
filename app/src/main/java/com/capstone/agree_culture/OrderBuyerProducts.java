@@ -234,7 +234,9 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
     }
 
-
+    /**
+     * Not in Use
+     */
     class CompletedDeliver implements View.OnClickListener{
 
         public CompletedDeliver(){}

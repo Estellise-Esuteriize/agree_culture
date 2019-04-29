@@ -1,6 +1,7 @@
 package com.capstone.agree_culture;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -19,7 +20,9 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.capstone.agree_culture.CustomClass.DirectionsJSONParser;
+import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
+import com.capstone.agree_culture.Model.Delivery;
 import com.capstone.agree_culture.Model.User;
 import com.capstone.agree_culture.R;
 import com.google.android.gms.common.api.Status;
@@ -39,11 +42,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.WriteBatch;
 
 import org.json.JSONObject;
 
@@ -68,6 +78,8 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
     private Marker deliveryCar;
     private Marker destinationMarker;
 
+    private FirebaseFirestore mDatabase;
+
 
     private final int REQUEST_LOCATION_PERMISSION = 101;
 
@@ -83,13 +95,20 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
     private List<Address> addresses = new ArrayList<>();
 
+    private User currentUser;
     private User buyer;
+
+    private Delivery delivery;
+
+    private Context context;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_destination_map);
+
+        context = this;
 
         //Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -100,11 +119,16 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
                 getSupportFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
 
+        mDatabase = FirebaseFirestore.getInstance();
+
         targetPosition = (ImageButton) findViewById(R.id.destination_map_target_position);
 
 
         buyer = (User) getIntent().getSerializableExtra("buyer");
 
+        currentUser = Helper.currentUser;
+
+        delivery = new Delivery();
 
         geocoder = new Geocoder(this, Locale.getDefault());
 
@@ -154,6 +178,21 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
                                 mMap.moveCamera(CameraUpdateFactory.newLatLng(lang));
 
+                            }
+
+                            try{
+
+                                WriteBatch batch = mDatabase.batch();
+                                DocumentReference ref = mDatabase.collection(GlobalString.DELIVERY).document(delivery.getDocumentId());
+
+                                batch.update(ref, delivery.getStringDeliveryLat(), lang.latitude);
+                                batch.update(ref, delivery.getStringDeliveryLong(), lang.longitude);
+
+                                batch.commit();
+
+                            }
+                            catch (Exception ex){
+                                ex.printStackTrace();
                             }
 
                         }
@@ -214,7 +253,7 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         BitmapDescriptor destMarkerColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE);
-        BitmapDescriptor delvMarkerColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
+        final BitmapDescriptor delvMarkerColor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE);
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
@@ -253,6 +292,59 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
         }
 
 
+        mDatabase.collection(GlobalString.DELIVERY).whereEqualTo(delivery.getStringOwnerProductUuid(), currentUser.getDocumentId()).whereEqualTo(delivery.getStringBuyerProductUuid(), currentUser.getDocumentId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if(task.isSuccessful()){
+
+                    int item = 0;
+                    int limit = 0;
+
+                    for(DocumentSnapshot snapshot : task.getResult()){
+
+                        if(item > limit){
+                            break;
+                        }
+
+                        if(snapshot.exists()){
+                            delivery = (Delivery) snapshot.toObject(Delivery.class);
+                            delivery.setDocumentId(snapshot.getId());
+                        }
+                        else{
+                            setDeliveryData();
+                        }
+                        item++;
+                    }
+                }
+                else{
+                    try{
+                        throw task.getException();
+                    }
+                    catch (Exception ex){
+                        Helper.ToastDisplayer(context, ex.getMessage(), Toast.LENGTH_SHORT);
+                    }
+                }
+
+            }
+        });
+
+
+    }
+
+    private void setDeliveryData(){
+
+        final Delivery delivery = new Delivery(currentUser.getDocumentId(), buyer.getDocumentId());
+
+        mDatabase.collection(GlobalString.DELIVERY).add(delivery).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful()){
+                    delivery.setDocumentId(task.getResult().getId());
+                }
+            }
+        });
+
     }
 
     private void changeDestinationMaker(LatLng latLng){
@@ -273,6 +365,28 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
         // Start downloading json data from Google Directions API
         downloadTask.execute(url);
+
+
+        /**
+         * Set Destination in Database
+         */
+
+        double destLat = destination.latitude;
+        double destLong = destination.longitude;
+
+        try{
+            WriteBatch batch = mDatabase.batch();
+            DocumentReference ref = mDatabase.collection(GlobalString.DELIVERY).document(delivery.getDocumentId());
+
+            batch.update(ref, delivery.getStringDeliveryLat(), destLat);
+
+            batch.update(ref, delivery.getStringDestinationLong(), destLong);
+
+            batch.commit();
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
 
     }
 

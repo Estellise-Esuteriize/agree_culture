@@ -14,11 +14,13 @@ public class GlobalString {
      *      - products
      *      - orders
      *      - messages
+     *      - delivery
      */
     public static String USER = "users";
     public static String PRODUCTS = "products";
     public static String ORDERS = "orders";
     public static String MESSAGES = "messages";
+    public static String DELIVERY = "delivery";
 
     /**
      * Firebase Storage Folders

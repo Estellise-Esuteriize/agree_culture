@@ -70,53 +70,58 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
         final MyViewHolder item = myViewHolder;
         final int index = i;
 
-        CollectionReference ref = mDatabase.collection(GlobalString.PRODUCTS);
-        ref.orderBy("createdAt");
-        ref.document(order.getProductUidRef()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        mDatabase.collection(GlobalString.PRODUCTS).document(order.getProductUidRef()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                if(task.isSuccessful() && task.getResult().exists()){
+                if(task.isSuccessful()){
 
-                    Product product = task.getResult().toObject(Product.class);
+                    if(task.getResult().exists()){
 
-                    product.setCollectionId(task.getResult().getId());
+                        Product product = task.getResult().toObject(Product.class);
 
-                    Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.productPhoto);
+                        product.setCollectionId(task.getResult().getId());
 
-                    item.productStatus.setTextColor(Helper.orderStatusColors(fOrders.getStatus()));
-                    item.productStatus.setText(fOrders.getStatus());
+                        Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.productPhoto);
 
-                    item.productName.setText(product.getProductName());
+                        item.productStatus.setTextColor(Helper.orderStatusColors(fOrders.getStatus()));
+                        item.productStatus.setText(fOrders.getStatus());
 
-                    double price = (double)product.getProductMinimum() * product.getProductPrice();
+                        item.productName.setText(product.getProductName());
 
-                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
+                        double price = (double)product.getProductMinimum() * product.getProductPrice();
+
+                        item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
 
-                    if(fOrders.getStatus().equals(Orders.CANCELED) || fOrders.getStatus().equals(Orders.COMPLETED) || fOrders.getStatus().equals(Orders.DELIVERY)){
+                        if(fOrders.getStatus().equals(Orders.CANCELED) || fOrders.getStatus().equals(Orders.COMPLETED) || fOrders.getStatus().equals(Orders.DELIVERY)){
 
-                        item.productRemove.setVisibility(View.GONE);
+                            item.productRemove.setVisibility(View.GONE);
+
+                        }
+                        else{
+
+                            item.productRemove.setOnClickListener(null);
+
+                            item.productRemove.setOnClickListener(new CancelOrderProduct(index));
+
+                        }
 
                     }
                     else{
-
-                        item.productRemove.setOnClickListener(null);
-
-                        item.productRemove.setOnClickListener(new CancelOrderProduct(index));
-
+                        item.productStatus.setText(R.string.product_deleted);
                     }
 
 
                 }
                 else{
-                    if(!task.isSuccessful()){
-                        try{
-                            throw task.getException();
-                        }catch (Exception ex){
-                            Toast.makeText(item.itemView.getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
-                        }
+
+                    try{
+                        throw task.getException();
+                    }catch (Exception ex){
+                        Toast.makeText(item.itemView.getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
                     }
+
                 }
 
 

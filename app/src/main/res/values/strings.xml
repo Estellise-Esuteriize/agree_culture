@@ -23,6 +23,8 @@
 
     <string name="successfully_update">Successfully Update</string>
 
+    <string name="product_deleted">Product Deleted</string>
+
     <string name="successfully_delivered">Successfully delivered products</string>
 
     <string name="delivered_successfully">Successfully delivered products, continue to transfer products</string>
