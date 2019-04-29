@@ -1,6 +1,7 @@
 package com.capstone.agree_culture;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capstone.agree_culture.Helper.GlobalString;
 import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -33,6 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.rpc.Help;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -422,7 +425,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         WriteBatch batch = mDatabase.batch();
-        DocumentReference ref = mDatabase.document(updateUser.getDocumentId());
+        DocumentReference ref = mDatabase.collection(GlobalString.USER).document(updateUser.getDocumentId());
 
         if(!stringValidation(fullName, updateUser.getFull_name())){
             batch.update(ref,"full_name", fullName);
@@ -463,7 +466,15 @@ public class SignUpActivity extends AppCompatActivity {
                 }
                 else{
 
+                    Helper.ToastDisplayer(cont, getString(R.string.successfully_update), Toast.LENGTH_SHORT);
+
                     Helper.currentUser = updateUser;
+
+                    Intent intent = new Intent();
+
+                    intent.putExtra("updatedUser", (Serializable) updateUser);
+
+                    setResult(RESULT_OK, intent);
 
                     finish();
 

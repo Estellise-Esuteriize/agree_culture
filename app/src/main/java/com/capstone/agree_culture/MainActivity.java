@@ -110,6 +110,7 @@ public class MainActivity extends AppCompatActivity
 
     private final static int USER_PHOTO = 1012;
     private final static int PERMISSION_USER_PHOTO = 1013;
+    private final static int UPDATE_USER = 1016;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity
             FirebaseFirestore.getInstance().setFirestoreSettings(settings);
 
             Helper.isFirestoreSettingsInitialize = true;
-
         }
 
         mAuth = FirebaseAuth.getInstance();
@@ -191,7 +191,6 @@ public class MainActivity extends AppCompatActivity
                             Glide.with(getApplicationContext()).load(currentUser.getPhoto()).placeholder(R.drawable.imageview_rectangular).into(user_photo);
                         }
 
-
                     }
 
                     main_menu.initializedHome(currentUser);
@@ -231,6 +230,7 @@ public class MainActivity extends AppCompatActivity
         if (mUser == null) {
             getMenuInflater().inflate(R.menu.main, menu);
         }
+
         return true;
     }
 
@@ -259,77 +259,78 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if(mUser == null){
-            return true;
-        }
+        if(mUser != null){
 
-        if (id == R.id.nav_home) {
-            // Handle the camera action
-            fragment_transaction = getSupportFragmentManager().beginTransaction();
-            fragment_transaction.replace(fragment, main_menu);
-            fragment_transaction.commit();
+            if (id == R.id.nav_home) {
+                // Handle the camera action
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, main_menu);
+                fragment_transaction.commit();
+
+            }
+            else if (id == R.id.nav_messages) {
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, messages);
+                fragment_transaction.commit();
+
+            }
+            else if (id == R.id.nav_products) {
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menu_products);
+                fragment_transaction.commit();
+            }
+            else if(id == R.id.nav_my_cart){
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menuMyCart);
+                fragment_transaction.commit();
+            }
+            else if(id == R.id.nav_orders){
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menuOrders);
+                fragment_transaction.commit();
+            }
+            else if(id == R.id.nav_purchase_history){
+                fragment_transaction = getSupportFragmentManager().beginTransaction();
+                fragment_transaction.replace(fragment, menuPurchaseHistory);
+                fragment_transaction.commit();
+            }
+            else if(id == R.id.nav_account_edit){
+                Intent intent = new Intent(this, SignUpActivity.class);
+                intent.putExtra("user", (Serializable) currentUser);
+                startActivityForResult(intent, UPDATE_USER);
+            }
+            else if (id == R.id.nav_logout) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Logout");
+                builder.setMessage("Continue Logout?");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mAuth.signOut();
+                        Intent intent = new Intent(cont, MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        finish();
+                        startActivity(intent);
+
+                    }
+                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                builder.create().show();
+
+            }
+
 
         }
-        else if (id == R.id.nav_messages) {
-            fragment_transaction = getSupportFragmentManager().beginTransaction();
-            fragment_transaction.replace(fragment, messages);
-            fragment_transaction.commit();
-
-        }
-        else if (id == R.id.nav_products) {
-            fragment_transaction = getSupportFragmentManager().beginTransaction();
-            fragment_transaction.replace(fragment, menu_products);
-            fragment_transaction.commit();
-        }
-        else if(id == R.id.nav_my_cart){
-            fragment_transaction = getSupportFragmentManager().beginTransaction();
-            fragment_transaction.replace(fragment, menuMyCart);
-            fragment_transaction.commit();
-        }
-        else if(id == R.id.nav_orders){
-            fragment_transaction = getSupportFragmentManager().beginTransaction();
-            fragment_transaction.replace(fragment, menuOrders);
-            fragment_transaction.commit();
-        }
-        else if(id == R.id.nav_purchase_history){
-            fragment_transaction = getSupportFragmentManager().beginTransaction();
-            fragment_transaction.replace(fragment, menuPurchaseHistory);
-            fragment_transaction.commit();
-        }
-        else if(id == R.id.nav_account_edit){
-            Intent intent = new Intent(this, SignUpActivity.class);
-            intent.putExtra("user", (Serializable) currentUser);
-            startActivity(intent);
-        }
-        else if (id == R.id.nav_logout) {
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Logout");
-            builder.setMessage("Continue Logout?");
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mAuth.signOut();
-                    Intent intent = new Intent(cont, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    finish();
-                    startActivity(intent);
-
-                }
-            }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-            });
-
-            builder.create().show();
-
-        }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -404,6 +405,12 @@ public class MainActivity extends AppCompatActivity
 
 
 
+        }
+        else if(requestCode == UPDATE_USER && resultCode == RESULT_OK){
+            currentUser = Helper.currentUser;
+
+            user_full_name.setText(getString(R.string.home_full_name, currentUser.getFull_name(), currentUser.getRole()));
+            user_email.setText(mUser.getEmail());
         }
 
         super.onActivityResult(requestCode, resultCode, data);

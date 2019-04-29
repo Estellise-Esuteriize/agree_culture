@@ -17,8 +17,13 @@ import java.util.List;
 
 public class Helper {
 
-
-    public static final String ITEXMO_API = "TR-AGREE350631_91W3C";
+    /**
+     * old ITEX MO API
+     *  - TR-AGREE350631_91W3C
+     * new ITEX MO API
+     *  - TR-AGREE086823_M6A9V
+     */
+    public static final String ITEXMO_API = "TR-AGREE086823_M6A9V";
 
     public static final String API_GOOGLE_GEO = "AIzaSyBCXGVFnN4GANxHUo4E90Q3gOhcZgE8reo";
 

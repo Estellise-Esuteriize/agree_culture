@@ -21,6 +21,8 @@
     <string name="update">Update</string>
     <string name="update_information">Update Information</string>
 
+    <string name="successfully_update">Successfully Update</string>
+
     <string name="successfully_delivered">Successfully delivered products</string>
 
     <string name="delivered_successfully">Successfully delivered products, continue to transfer products</string>
