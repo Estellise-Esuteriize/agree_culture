@@ -11,11 +11,15 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capstone.agree_culture.Helper.Helper;
+import com.capstone.agree_culture.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,8 +27,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
+import com.google.rpc.Help;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +63,9 @@ public class SignUpActivity extends AppCompatActivity {
 
     private Context cont;
 
+    private User updateUser;
+    private FirebaseUser currentUser;
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -68,10 +78,11 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
-
         mAuth = FirebaseAuth.getInstance();
 
-        if(null != mAuth.getCurrentUser()){
+        updateUser = (User) getIntent().getSerializableExtra("user");
+
+        if(null != mAuth.getCurrentUser() && updateUser == null){
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
             Toast.makeText(this, getResources().getString(R.string.user_exists), Toast.LENGTH_SHORT).show();
@@ -83,6 +94,9 @@ public class SignUpActivity extends AppCompatActivity {
                     finish();
                 }
             }, Toast.LENGTH_SHORT + 100);
+        }
+        else if(mAuth.getCurrentUser() != null){
+            currentUser = mAuth.getCurrentUser();
         }
 
         /**
@@ -118,9 +132,28 @@ public class SignUpActivity extends AppCompatActivity {
         sign_up_confirm = (Button) findViewById(R.id.sign_up_button);
 
 
-        sign_up_confirm.setOnClickListener(new SignUpConfirm());
-
         progress_bar = findViewById(R.id.progress_bar);
+
+        if(updateUser != null){
+
+            sign_up_user_role.setEnabled(false);
+
+            sign_up_user_role.setSelection(((ArrayAdapter)sign_up_user_role.getAdapter()).getPosition(updateUser.getRole()));
+
+            sign_up_full_name.setText(updateUser.getFull_name());
+            sign_up_email.setText(currentUser.getEmail());
+
+            sign_up_address.setText(updateUser.getAddress());
+            sign_up_city.setText(updateUser.getCity());
+
+            String phoneNumber = updateUser.getPhone_number().substring(3);
+            sign_up_phone_number.setText(phoneNumber);
+
+            sign_up_confirm.setText(R.string.update_information);
+
+        }
+
+        sign_up_confirm.setOnClickListener(new SignUpConfirm());
 
     }
 
@@ -200,7 +233,7 @@ public class SignUpActivity extends AppCompatActivity {
         if(!has_error){
 
             progress_bar.setVisibility(View.VISIBLE);
-
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
@@ -266,6 +299,7 @@ public class SignUpActivity extends AppCompatActivity {
                         try{
 
                             progress_bar.setVisibility(View.GONE);
+                            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                             throw task.getException();
                         }
@@ -295,11 +329,197 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    class SignUpConfirm implements View.OnClickListener{
+    private void updateInformation(){
 
+        boolean hasError = false;
+
+        String fullName = sign_up_full_name.getText().toString();
+        String email = sign_up_email.getText().toString();
+        String password = sign_up_password.getText().toString();
+        String passwordConfirmation = sign_up_password_confirmation.getText().toString();
+        String address = sign_up_address.getText().toString();
+        String city = sign_up_city.getText().toString();
+        String phoneNumber = sign_up_phone_number.getText().toString();
+
+
+        if(stringValidation(fullName)){
+            errorDisplayer(sign_up_full_name, getString(R.string.sign_up_full_name_no_text));
+            hasError = true;
+        }
+        else if(stringValidation(fullName, FULL_NAME_LIMIT)){
+            errorDisplayer(sign_up_full_name, getString(R.string.sign_up_full_name_limit));
+            hasError = true;
+        }
+
+        if(stringValidation(email)){
+            errorDisplayer(sign_up_email, getString(R.string.sign_up_email_no_text));
+            hasError = true;
+        }
+        else if(!emailValidation(email)){
+            errorDisplayer(sign_up_email, getString(R.string.sign_up_email_not_valid));
+            hasError = true;
+        }
+
+        if(!stringValidation(password) && !stringValidation(password, passwordConfirmation)){
+            errorDisplayer(sign_up_password, getString(R.string.sign_up_password_confirmation_required));
+            hasError = true;
+        }
+
+        if(stringValidation(address)){
+            errorDisplayer(sign_up_address, getString(R.string.sign_up_address_required));
+            hasError = true;
+        }
+
+        if(stringValidation(city)){
+            errorDisplayer(sign_up_city, getString(R.string.sign_up_city_required));
+            hasError = true;
+        }
+
+        if(stringValidation(phoneNumber)){
+            errorDisplayer(sign_up_phone_number, getString(R.string.sign_up_phone_number_required));
+            hasError = true;
+        }
+
+
+        if(hasError){
+            return;
+        }
+
+        progress_bar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        if(!stringValidation(email, currentUser.getEmail())){
+            currentUser.updateEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    if(!task.isSuccessful()){
+                        try{
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Helper.ToastDisplayer(cont, ex.getMessage(), Toast.LENGTH_SHORT);
+                        }
+                    }
+                }
+            });
+        }
+
+        if(!stringValidation(password)){
+            currentUser.updatePassword(password).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(!task.isSuccessful()){
+                        try{
+                            throw task.getException();
+                        }
+                        catch (Exception ex){
+                            Helper.ToastDisplayer(cont, ex.getMessage(), Toast.LENGTH_SHORT);
+                        }
+                    }
+                }
+            });
+        }
+
+        WriteBatch batch = mDatabase.batch();
+        DocumentReference ref = mDatabase.document(updateUser.getDocumentId());
+
+        if(!stringValidation(fullName, updateUser.getFull_name())){
+            batch.update(ref,"full_name", fullName);
+            updateUser.setFull_name(fullName);
+        }
+
+        if(!stringValidation(address, updateUser.getAddress())){
+            batch.update(ref, "address", address);
+            updateUser.setAddress(address);
+        }
+
+        if(!stringValidation(city, updateUser.getCity())){
+            batch.update(ref, "city", city);
+            updateUser.setCity(city);
+        }
+
+        phoneNumber = "+63" + phoneNumber;
+
+        if(!stringValidation(phoneNumber, updateUser.getPhone_number())){
+            batch.update(ref, "phone_number", phoneNumber);
+            updateUser.setPhone_number(phoneNumber);
+        }
+
+        batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+                progress_bar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+                if(!task.isSuccessful()){
+                    try{
+                        throw task.getException();
+                    }
+                    catch (Exception ex){
+                        Helper.ToastDisplayer(cont, ex.getMessage(), Toast.LENGTH_LONG);
+                    }
+                }
+                else{
+
+                    Helper.currentUser = updateUser;
+
+                    finish();
+
+                }
+
+            }
+        });
+
+    }
+
+    private boolean stringValidation(String text){
+        return TextUtils.isEmpty(text);
+    }
+
+    private boolean stringValidation(String text, int limit){
+
+        if(text.length() > limit){
+            return true;
+        }
+
+        return stringValidation(text);
+
+    }
+
+    private boolean stringValidation(String text, String equal){
+        return text.equals(equal);
+
+    }
+
+    private boolean emailValidation(String email){
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    private <E>void errorDisplayer(E eItem, String message){
+
+        if(eItem instanceof TextView){
+            TextView item = (TextView) eItem;
+
+            item.setError(message);
+
+        }
+
+    }
+
+
+
+    class SignUpConfirm implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            signUp();
+
+            if(updateUser != null){
+                updateInformation();
+            }
+            else{
+                signUp();
+            }
         }
     }
 

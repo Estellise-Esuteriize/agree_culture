@@ -9,6 +9,18 @@
     <string name="ok">OK</string>
     <string name="cancel">CANCEL</string>
 
+    <string name="home">Home</string>
+    <string name="products">Products</string>
+    <string name="purchase_history">Purchase History</string>
+    <string name="account">Account</string>
+
+    <string name="customer">Customer</string>
+    <string name="distributor">Distributor</string>
+    <string name="supplier">Supplier</string>
+
+    <string name="update">Update</string>
+    <string name="update_information">Update Information</string>
+
     <string name="successfully_delivered">Successfully delivered products</string>
 
     <string name="delivered_successfully">Successfully delivered products, continue to transfer products</string>
@@ -34,6 +46,8 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="nav_messages">Messages</string>
     <string name="nav_my_cart">My Cart</string>
+    <string name="nav_edit_account">Edit Account</string>
+    <string name="nav_logout">Logout</string>
 
     <string name="nav_orders">Orders</string>
 
@@ -150,6 +164,7 @@
     <string name="sign_up_city_required">City is required</string>
     <string name="sign_up_phone_number_required">Phone number is required</string>
     <string name="title_activity_menu_products">MenuProducts</string>
+
     <string name="title_activity_products_creation">ProductsCreationActivity</string>
     <string name="title_activity_products_update">ProductsUpdateActivity</string>
 

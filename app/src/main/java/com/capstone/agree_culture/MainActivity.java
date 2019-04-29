@@ -59,6 +59,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.nav_orders).setVisible(false);
             menu.findItem(R.id.nav_logout).setVisible(false);
             menu.findItem(R.id.nav_purchase_history).setVisible(false);
+            menu.findItem(R.id.nav_account_edit).setVisible(false);
         }
 
     }
@@ -257,6 +259,10 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if(mUser == null){
+            return true;
+        }
+
         if (id == R.id.nav_home) {
             // Handle the camera action
             fragment_transaction = getSupportFragmentManager().beginTransaction();
@@ -265,65 +271,59 @@ public class MainActivity extends AppCompatActivity
 
         }
         else if (id == R.id.nav_messages) {
-            if (mUser != null) {
-                fragment_transaction = getSupportFragmentManager().beginTransaction();
-                fragment_transaction.replace(fragment, messages);
-                fragment_transaction.commit();
-            }
+            fragment_transaction = getSupportFragmentManager().beginTransaction();
+            fragment_transaction.replace(fragment, messages);
+            fragment_transaction.commit();
+
         }
         else if (id == R.id.nav_products) {
-            if (mUser != null) {
-                fragment_transaction = getSupportFragmentManager().beginTransaction();
-                fragment_transaction.replace(fragment, menu_products);
-                fragment_transaction.commit();
-            }
+            fragment_transaction = getSupportFragmentManager().beginTransaction();
+            fragment_transaction.replace(fragment, menu_products);
+            fragment_transaction.commit();
         }
         else if(id == R.id.nav_my_cart){
-            if (mUser != null) {
-                fragment_transaction = getSupportFragmentManager().beginTransaction();
-                fragment_transaction.replace(fragment, menuMyCart);
-                fragment_transaction.commit();
-            }
+            fragment_transaction = getSupportFragmentManager().beginTransaction();
+            fragment_transaction.replace(fragment, menuMyCart);
+            fragment_transaction.commit();
         }
         else if(id == R.id.nav_orders){
-            if (mUser != null) {
-                fragment_transaction = getSupportFragmentManager().beginTransaction();
-                fragment_transaction.replace(fragment, menuOrders);
-                fragment_transaction.commit();
-            }
+            fragment_transaction = getSupportFragmentManager().beginTransaction();
+            fragment_transaction.replace(fragment, menuOrders);
+            fragment_transaction.commit();
         }
         else if(id == R.id.nav_purchase_history){
-            if (mUser != null) {
-                fragment_transaction = getSupportFragmentManager().beginTransaction();
-                fragment_transaction.replace(fragment, menuPurchaseHistory);
-                fragment_transaction.commit();
-            }
+            fragment_transaction = getSupportFragmentManager().beginTransaction();
+            fragment_transaction.replace(fragment, menuPurchaseHistory);
+            fragment_transaction.commit();
+        }
+        else if(id == R.id.nav_account_edit){
+            Intent intent = new Intent(this, SignUpActivity.class);
+            intent.putExtra("user", (Serializable) currentUser);
+            startActivity(intent);
         }
         else if (id == R.id.nav_logout) {
 
-            if (mUser != null) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Logout");
-                builder.setMessage("Continue Logout?");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mAuth.signOut();
-                        Intent intent = new Intent(cont, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        finish();
-                        startActivity(intent);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Logout");
+            builder.setMessage("Continue Logout?");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mAuth.signOut();
+                    Intent intent = new Intent(cont, MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    finish();
+                    startActivity(intent);
 
-                    }
-                }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                }
+            }).setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
+                }
+            });
 
-                builder.create().show();
-            }
+            builder.create().show();
 
         }
 

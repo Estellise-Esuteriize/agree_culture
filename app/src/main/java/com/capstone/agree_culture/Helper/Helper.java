@@ -1,5 +1,12 @@
 package com.capstone.agree_culture.Helper;
 
+import android.app.Activity;
+import android.content.Context;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.capstone.agree_culture.Model.Messages;
 import com.capstone.agree_culture.Model.Orders;
 import com.capstone.agree_culture.Model.User;
@@ -105,6 +112,21 @@ public class Helper {
 
         return newList;
 
+    }
+
+    public static void ToastDisplayer(Context context, String message, int length){
+        Toast.makeText(context, message, length).show();
+    }
+
+
+    public static void ProgressDisplayer(final Context context, final ProgressBar progressBar){
+        progressBar.setVisibility(View.VISIBLE);
+        ((Activity)context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+    public static void ProgressRemover(final Context context, final ProgressBar progressBar){
+        progressBar.setVisibility(View.GONE);
+        ((Activity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
 
