@@ -222,7 +222,7 @@ public class DeliveryOwnerMapActivity extends FragmentActivity implements OnMapR
     }
 
     /**
-     * A class to parse the Google Places in JSON format
+     * A class to parse the Google PlacesSearch in JSON format
      */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 

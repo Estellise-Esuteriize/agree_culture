@@ -50,6 +50,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.rpc.Help;
 
 import org.json.JSONObject;
 
@@ -130,7 +131,7 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
 
 
         if(!Places.isInitialized()){
-            Places.initialize(this, "AIzaSyBCXGVFnN4GANxHUo4E90Q3gOhcZgE8reo");
+            Places.initialize(this, Helper.API_GOOGLE_GEO);
         }
 
         // Specify the types of place data to return.
@@ -459,7 +460,7 @@ public class DeliveryDestinationMapActivity extends FragmentActivity implements 
     }
 
     /**
-     * A class to parse the Google Places in JSON format
+     * A class to parse the Google PlacesSearch in JSON format
      */
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
 

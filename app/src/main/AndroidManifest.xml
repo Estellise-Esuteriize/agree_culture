@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.capstone.agree_culture">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -27,7 +26,7 @@
         android:roundIcon="@mipmap/ic_launcher_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-
+        <activity android:name=".SearchPlaceActivity"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -42,7 +41,7 @@
 
         <activity
             android:name=".DeliveryOwnerMapActivity"
-            android:label="@string/title_activity_delivery_owner_map"/>
+            android:label="@string/title_activity_delivery_owner_map" />
         <activity
             android:name=".DeliveryDestinationMapActivity"
             android:label="@string/title_activity_delivery_destination_map"
