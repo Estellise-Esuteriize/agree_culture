@@ -1,11 +1,13 @@
 package com.capstone.agree_culture;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -29,7 +31,9 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
     private FirebaseFirestore mDatabase;
 
-    ProgressBar progressBar;
+    private View progressBar;
+
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,9 @@ public class SearchPlaceActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+        context = this;
 
 
         mDatabase = FirebaseFirestore.getInstance();
@@ -83,19 +90,19 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
             try{
                 double latitude = place.getLatLng().latitude;
-                double longtitude = place.getLatLng().longitude;
+                double longitude = place.getLatLng().longitude;
 
 
-                PlacesSearch places = new PlacesSearch(latitude, longtitude);
+                PlacesSearch places = new PlacesSearch(latitude, longitude);
 
 
-                Helper.ProgressDisplayer(getApplicationContext(), progressBar);
+                Helper.ProgressDisplayer(context, progressBar);
 
                 mDatabase.collection(GlobalString.PLACES).document(place.getName()).set(places).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
 
-                        Helper.ProgressRemover(getApplicationContext(), progressBar);
+                        Helper.ProgressRemover(context, progressBar);
 
                         if(task.isSuccessful()){
 
@@ -105,13 +112,15 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
                             setResult(RESULT_OK, intent);
 
+                            finish();
+
                         }
                         else{
                             try{
                                 throw task.getException();
                             }
                             catch (Exception ex){
-                                Helper.ToastDisplayer(getApplicationContext(), ex.getMessage(), Toast.LENGTH_LONG);
+                                Helper.ToastDisplayer(context, ex.getMessage(), Toast.LENGTH_LONG);
                             }
                         }
 
@@ -123,8 +132,11 @@ public class SearchPlaceActivity extends AppCompatActivity {
 
             }
             catch (Exception ex){
+
+                Helper.ProgressRemover(context, progressBar);
+
                 ex.printStackTrace();
-                Helper.ToastDisplayer(getApplicationContext(), ex.getMessage(), Toast.LENGTH_SHORT);
+                Helper.ToastDisplayer(context, ex.getMessage(), Toast.LENGTH_SHORT);
             }
 
 

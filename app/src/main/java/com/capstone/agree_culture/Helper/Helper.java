@@ -128,12 +128,12 @@ public class Helper {
     }
 
 
-    public static void ProgressDisplayer(final Context context, final ProgressBar progressBar){
+    public static void ProgressDisplayer(final Context context, final View progressBar){
         progressBar.setVisibility(View.VISIBLE);
         ((Activity)context).getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
-    public static void ProgressRemover(final Context context, final ProgressBar progressBar){
+    public static void ProgressRemover(final Context context, final View progressBar){
         progressBar.setVisibility(View.GONE);
         ((Activity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }

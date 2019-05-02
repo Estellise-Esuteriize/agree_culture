@@ -544,7 +544,7 @@ public class SignUpActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Intent intent = new Intent(getApplicationContext(), SearchPlace.class);
+            Intent intent = new Intent(getApplicationContext(), SearchPlaceActivity.class);
 
             startActivityForResult(intent, SEARCH_PLACE_ID);
 

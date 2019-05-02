@@ -6,16 +6,16 @@ public class PlacesSearch {
     private String documentId;
 
     private double latitude;
-    private double longtitude;
+    private double longitude;
 
 
     public PlacesSearch(){
 
     }
 
-    public PlacesSearch(double latitude, double longtitude){
+    public PlacesSearch(double latitude, double longitude){
         this.latitude = latitude;
-        this.longtitude = longtitude;
+        this.longitude = longitude;
     }
 
 
@@ -35,11 +35,11 @@ public class PlacesSearch {
         this.latitude = latitude;
     }
 
-    public double getLongtitude() {
-        return longtitude;
+    public double getLongitude() {
+        return longitude;
     }
 
-    public void setLongtitude(double longtitude) {
-        this.longtitude = longtitude;
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 }
