@@ -14,6 +14,7 @@ public class Product implements Serializable {
     private Double productPrice;
     private Integer productQuantity;
     private Integer productMinimum;
+    private Integer productKg;
     private String productStatus;
     private String productPhoto;
     private String userProductType;
@@ -136,5 +137,13 @@ public class Product implements Serializable {
 
     public void setProductPhoto(String productPhoto) {
         this.productPhoto = productPhoto;
+    }
+
+    public Integer getProductKg() {
+        return productKg;
+    }
+
+    public void setProductKg(Integer productKg) {
+        this.productKg = productKg;
     }
 }

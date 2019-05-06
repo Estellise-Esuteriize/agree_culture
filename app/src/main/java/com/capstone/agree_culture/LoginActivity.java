@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,11 +19,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.capstone.agree_culture.Helper.Helper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthEmailException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 
 /**
@@ -110,6 +115,8 @@ public class LoginActivity extends AppCompatActivity{
         final String password = sign_in_password.getText().toString();
 
         progress_bar.setVisibility(View.VISIBLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         if(TextUtils.isEmpty(email) || TextUtils.isEmpty(password)){
             Toast.makeText(this, getResources().getString(R.string.login_empty), Toast.LENGTH_LONG).show();
@@ -118,6 +125,12 @@ public class LoginActivity extends AppCompatActivity{
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+
+
+
+                progress_bar.setVisibility(View.GONE);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
                 if(task.isSuccessful()){
                     Intent intent = new Intent(cont, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -126,10 +139,11 @@ public class LoginActivity extends AppCompatActivity{
                 }
                 else{
 
-                    progress_bar.setVisibility(View.GONE);
-
                     try{
                         throw task.getException();
+                    }
+                    catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException ex){
+                        Helper.ToastDisplayer(cont, getResources().getString(R.string.invalidSignIn), Toast.LENGTH_LONG);
                     }
                     catch (Exception ex){
                         Toast.makeText(cont, ex.getMessage(), Toast.LENGTH_SHORT).show();

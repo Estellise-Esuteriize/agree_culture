@@ -178,4 +178,31 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <TextView
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="-5dp"
+        android:text="@string/weight"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.design.widget.TextInputEditText
+            android:inputType="number"
+            android:id="@+id/product_create_kg"
+            android:padding="5dp"
+            android:hint="@string/zero"
+            android:background="@drawable/edittext_white_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </android.support.design.widget.TextInputLayout>
+
 </LinearLayout>

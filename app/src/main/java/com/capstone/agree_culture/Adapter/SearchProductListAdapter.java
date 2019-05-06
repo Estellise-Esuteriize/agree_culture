@@ -66,9 +66,19 @@ public class SearchProductListAdapter extends RecyclerView.Adapter<SearchProduct
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         Product product = products.get(i);
 
+        String productKg = "";
+
+        try{
+            productKg = product.getProductKg().toString();
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+
         myViewHolder.product_name.setText(product.getProductName());
         myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.search_product_list_item, format
-                .format(product.getProductPrice()), product.getProductQuantity().toString(), product.getProductMinimum().toString()));
+                .format(product.getProductPrice()), product.getProductQuantity().toString(), product.getProductMinimum().toString(), productKg));
 
 
         final String desc = myViewHolder.product_desc.getText().toString();

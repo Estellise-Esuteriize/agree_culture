@@ -53,6 +53,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
     private EditText product_quantity;
     private EditText product_minimum;
     private ImageView productImageView;
+    private EditText productKg;
 
 
     private String user_uuid;
@@ -132,6 +133,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
         product_quantity = (EditText) findViewById(R.id.product_create_quantity);
         product_minimum = (EditText) findViewById(R.id.product_create_minimum);
         productImageView = (ImageView) findViewById(R.id.product_create_image);
+        productKg = (EditText) findViewById(R.id.product_create_kg);
 
         product_create_btn = (Button) findViewById(R.id.product_create_btn);
 
@@ -171,15 +173,18 @@ public class ProductsCreationActivity extends AppCompatActivity {
             double prod_price;
             int prod_quantity;
             int prod_minimum;
+            int prodKg;
             try{
                 prod_name = product_name.getText().toString();
                 prod_price = Double.parseDouble(product_price.getText().toString().replaceAll(",", ""));
                 prod_quantity = 0;
                 prod_minimum = 0;
+                prodKg = 0;
 
                 //if(!currentUser.getRole().equals(GlobalString.DISTRIBUTOR)){
                     prod_quantity = Integer.parseInt(product_quantity.getText().toString());
                 //}
+                prodKg = Integer.parseInt(productKg.getText().toString());
 
                 if(!TextUtils.isEmpty(product_minimum.getText().toString())){
                     prod_minimum = Integer.parseInt(product_minimum.getText().toString());
@@ -230,6 +235,7 @@ public class ProductsCreationActivity extends AppCompatActivity {
 
 
                 product = new Product(user_uuid, prod_name, prod_price, prod_quantity, prod_minimum, Helper.currentUser.getRole());
+                product.setProductKg(prodKg);
 
                 uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                     @Override

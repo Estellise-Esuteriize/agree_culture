@@ -75,8 +75,18 @@ public class MainMenuProductListsAdapter extends RecyclerView.Adapter<MainMenuPr
             price = 0.0;
         }
 
+        String prodKg = "";
 
-        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(price), product.getProductQuantity().toString(), product.getProductMinimum().toString()));
+
+        try{
+            prodKg = product.getProductKg().toString();
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        myViewHolder.product_detail.setText(myViewHolder.itemView.getContext().getResources().getString(R.string.main_menu_product_list_item, format.format(price), product.getProductQuantity().toString(), product.getProductMinimum().toString(), prodKg));
+
 
         myViewHolder.product_delete.setOnClickListener(new ProductDelete(product));
 

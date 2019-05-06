@@ -50,7 +50,7 @@
 
         <TextView
             android:id="@+id/main_menu_product_list_detal"
-            android:maxLines="3"
+            android:maxLines="5"
             android:ellipsize="none"
             android:text="@string/main_menu_product_list_item"
             android:textSize="10sp"

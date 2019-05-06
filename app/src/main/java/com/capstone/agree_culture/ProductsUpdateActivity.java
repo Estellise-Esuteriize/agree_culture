@@ -52,7 +52,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
      *  - productPhoto
      *      - the photo of the product
      */
-    private EditText product_name, product_price, product_quantity, product_minimum;
+    private EditText product_name, product_price, product_quantity, product_minimum, productKg;
     private ImageView productPhoto;
     /**
      * variables from previous activity
@@ -106,6 +106,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
         product_quantity = (EditText) findViewById(R.id.product_create_quantity);
         product_minimum = (EditText) findViewById(R.id.product_create_minimum);
         productPhoto = (ImageView) findViewById(R.id.product_create_image);
+        productKg = (EditText) findViewById(R.id.product_create_kg);
 
         progress_bar = findViewById(R.id.progress_bar);
 
@@ -145,10 +146,17 @@ public class ProductsUpdateActivity extends AppCompatActivity {
 
         DecimalFormat format = new DecimalFormat("#,###,###");
 
-        product_name.setText(product.getProductName());
-        product_price.setText(format.format(product.getProductPrice()));
-        product_quantity.setText(product.getProductQuantity().toString());
-        product_minimum.setText(product.getProductMinimum().toString());
+
+        try{
+            product_name.setText(product.getProductName());
+            product_price.setText(format.format(product.getProductPrice()));
+            product_quantity.setText(product.getProductQuantity().toString());
+            product_minimum.setText(product.getProductMinimum().toString());
+            productKg.setText(product.getProductKg().toString());
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
 
         Glide.with(this).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(productPhoto);
 
@@ -179,11 +187,13 @@ public class ProductsUpdateActivity extends AppCompatActivity {
             final double prod_price;
             final int prod_quantity;
             final int prod_minimum;
+            final int prodKg;
             try{
                 prod_name = product_name.getText().toString();
                 prod_price = Double.parseDouble(product_price.getText().toString().replaceAll(",", ""));
                 prod_quantity = Integer.parseInt(product_quantity.getText().toString());
                 prod_minimum = Integer.parseInt(product_minimum.getText().toString());
+                prodKg = Integer.parseInt(productKg.getText().toString());
             }
             catch (Exception ex){
 
@@ -239,7 +249,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
                 batch.update(ref, "productPrice", prod_price);
                 batch.update(ref, "productQuantity", prod_quantity);
                 batch.update(ref, "productMinimum", prod_minimum);
-
+                batch.update(ref, "productKg", prodKg);
 
 
                 batch.commit().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -253,6 +263,7 @@ public class ProductsUpdateActivity extends AppCompatActivity {
                             product.setProductPrice(prod_price);
                             product.setProductQuantity(prod_quantity);
                             product.setProductMinimum(prod_minimum);
+                            product.setProductKg(prodKg);
 
                             Intent intent = new Intent();
                             intent.putExtra("product", product);

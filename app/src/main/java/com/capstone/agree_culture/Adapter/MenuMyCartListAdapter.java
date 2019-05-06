@@ -97,7 +97,16 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
 
                     double price = (double)product.getProductMinimum() * product.getProductPrice();
 
-                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
+                    String prodKg = "";
+
+                    try{
+                        prodKg = product.getProductKg().toString();
+                    }
+                    catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+
+                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, prodKg,Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
 
                     item.productMinus.setOnClickListener(null);

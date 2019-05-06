@@ -86,7 +86,7 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
 
                         item.name.setText(product.getProductName());
                         item.quantity.setText(item.itemView.getContext().getResources().getString(R.string.buyer_list_quantity, String.format("%s", quantity)));
-                        item.price.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Price", format.format(price)));
+                        item.price.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Price per kg.", format.format(price)));
 
                         item.totalPrice.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Total Price", format.format(amount)));
 

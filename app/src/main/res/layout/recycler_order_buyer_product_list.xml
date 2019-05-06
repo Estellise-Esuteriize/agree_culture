@@ -23,10 +23,10 @@
         android:layout_marginEnd="30dp"
         android:textSize="16sp"
         android:id="@+id/order_buyer_product_name"
-        android:text="@string/app_name"
+        android:text="@string/product_create_name"
         app:layout_constraintStart_toEndOf="@id/order_buyer_product_photo"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/menu_cart_addition"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_width="0dp"
         android:layout_height="wrap_content" />
 
@@ -37,14 +37,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="35dp"
-        android:text="@string/app_name"
+        android:text="@string/product_create_quantity_label"
         android:layout_width="0dp"
         android:textSize="16sp"
         android:maxLines="2"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:text="@string/app_name"
+        android:text="@string/product_create_price_label"
         android:id="@+id/order_buyer_product_price"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"/>
 
     <TextView
-        android:text="@string/app_name"
+        android:text="@string/totalAmount"
         android:id="@+id/order_buyer_product_total"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
