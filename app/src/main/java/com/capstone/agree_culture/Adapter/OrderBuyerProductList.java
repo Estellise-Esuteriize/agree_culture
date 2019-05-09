@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.capstone.agree_culture.Helper.GlobalString;
+import com.capstone.agree_culture.Helper.Helper;
 import com.capstone.agree_culture.Model.Orders;
 import com.capstone.agree_culture.Model.Product;
 import com.capstone.agree_culture.R;
@@ -75,23 +77,58 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
 
                         Product product = task.getResult().toObject(Product.class);
 
-                        double price = product.getProductPrice();
+                        double price;
 
-                        double amount = quantity * price;
+                        try{
+                            price = product.getProductPrice();
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                            price = 0d;
+                        }
+
+
+                        double totalPrice = quantity * price;
+                        double productTaxPercentage = Helper.calculatePercentage(price);
+
+                        Log.d("TaxPercentage", productTaxPercentage + "");
+
+                        totalPrice += productTaxPercentage;
+
 
                         DecimalFormat format = new DecimalFormat("#,###.00");
 
-
                         Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.photo);
 
+                        /*
                         item.name.setText(product.getProductName());
                         item.quantity.setText(item.itemView.getContext().getResources().getString(R.string.buyer_list_quantity, String.format("%s", quantity)));
                         item.price.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Price per kg.", format.format(price)));
 
-                        item.totalPrice.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Total Price", format.format(amount)));
+                        item.totalPrice.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Total Price", format.format(totalPrice)));
+                        /*/
+
+                        String prodQuantity = "";
+                        String prodWeight = "";
+                        String prodPrice = "";
+                        String prodTax = "";
+                        String prodTotalPrice = "";
+
+                        try {
+                            prodQuantity = Integer.toString(quantity);
+                            prodPrice = format.format(price);
+                            prodTax = Integer.toString(Helper.productTax);
+                            prodTax += "%";
+                            prodTotalPrice = Double.toString(totalPrice);
+                            prodWeight = Integer.toString(product.getProductKg());
+                        }
+                        catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
+                        item.desc.setText(item.itemView.getContext().getResources().getString(R.string.productDesc2, prodQuantity, prodWeight, prodPrice, prodTax, prodTotalPrice));
 
                         item.cancel.setOnClickListener(null);
-
                         item.cancel.setOnClickListener(new CancelProduct(item.itemView.getContext(), order));
 
                     }
@@ -113,7 +150,7 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
 
 
         public ImageView photo, cancel;
-        public TextView name, quantity, price, totalPrice;
+        public TextView name, quantity, price, totalPrice, desc;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -122,10 +159,12 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
             cancel = (ImageView) itemView.findViewById(R.id.menu_order_cancel);
 
             name = (TextView) itemView.findViewById(R.id.order_buyer_product_name);
+            desc = (TextView) itemView.findViewById(R.id.order_buyer_product_desc);
+            /*
             quantity = (TextView) itemView.findViewById(R.id.order_buyer_product_quantity);
             price = (TextView) itemView.findViewById(R.id.order_buyer_product_price);
             totalPrice = (TextView) itemView.findViewById(R.id.order_buyer_product_total);
-
+            */
 
         }
     }

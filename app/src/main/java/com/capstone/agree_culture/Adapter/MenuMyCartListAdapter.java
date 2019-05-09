@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.nio.DoubleBuffer;
 import java.util.List;
 
 public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAdapter.MyViewHolder> {
@@ -96,17 +98,30 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
                     item.productName.setText(product.getProductName());
 
                     double price = (double)product.getProductMinimum() * product.getProductPrice();
+                    double prodTaxAmount = Helper.calculatePercentage(product.getProductPrice());
 
+                    price += prodTaxAmount;
+
+                    String prodQuantity = "";
                     String prodKg = "";
+                    String prodTax = "";
+                    String prodPrice = "";
+                    String prodTotalPrice = "";
 
                     try{
+                        prodQuantity = Integer.toString(product.getProductMinimum());
+                        prodPrice = Double.toString(product.getProductPrice());
+                        prodTax = Integer.toString(Helper.productTax);
+                        prodTax += "%";
+                        prodTotalPrice = Double.toString(price);
                         prodKg = product.getProductKg().toString();
+
                     }
                     catch (Exception ex){
                         ex.printStackTrace();
                     }
 
-                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, prodKg,Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
+                    item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.productDesc1, prodQuantity, prodKg, prodPrice, prodTax, prodTotalPrice));
 
 
                     item.productMinus.setOnClickListener(null);
@@ -180,8 +195,6 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
             this.index = index;
 
             this.product = product;
-
-
         }
 
         @Override
@@ -203,8 +216,32 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
                 else{
 
                     double price = order.getProductQuantity() * product.getProductPrice();
+                    double prodTaxAmount = Helper.calculatePercentage(product.getProductPrice());
 
-                    desc.setText(context.getResources().getString(R.string.menu_cart_desc, Integer.toString(order.getProductQuantity()), Double.toString(product.getProductPrice()), Double.toString(price)));
+                    price += prodTaxAmount;
+
+                    String prodQuantity = "";
+                    String prodKg = "";
+                    String prodTax = "";
+                    String prodPrice = "";
+                    String prodTotalPrice = "";
+
+                    try{
+                        prodQuantity = Integer.toString(order.getProductQuantity());
+                        prodPrice = Double.toString(product.getProductPrice());
+                        prodTax = Integer.toString(Helper.productTax);
+                        prodTax += "%";
+                        prodTotalPrice = Double.toString(price);
+                        prodKg = product.getProductKg().toString();
+
+                    }
+                    catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+
+                    desc.setText(context.getResources().getString(R.string.productDesc1, prodQuantity, prodKg, prodPrice, prodTax, prodTotalPrice));
+
+                    //desc.setText(context.getResources().getString(R.string.product_desc_1, Integer.toString(order.getProductQuantity()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
                 }
 
@@ -223,10 +260,31 @@ public class MenuMyCartListAdapter extends RecyclerView.Adapter<MenuMyCartListAd
                 else{
 
                     double price = order.getProductQuantity() * product.getProductPrice();
+                    double prodTaxAmount = Helper.calculatePercentage(product.getProductPrice());
 
-                    desc.setText(context.getResources().getString(R.string.menu_cart_desc, Integer.toString(order.getProductQuantity()), Double.toString(product.getProductPrice()), Double.toString(price)));
+                    price += prodTaxAmount;
 
+                    String prodQuantity = "";
+                    String prodKg = "";
+                    String prodTax = "";
+                    String prodPrice = "";
+                    String prodTotalPrice = "";
 
+                    try{
+                        prodQuantity = Integer.toString(order.getProductQuantity());
+                        prodPrice = Double.toString(product.getProductPrice());
+                        prodTax = Integer.toString(Helper.productTax);
+                        prodTax += "%";
+                        prodTotalPrice = Double.toString(price);
+                        prodKg = product.getProductKg().toString();
+
+                    }
+                    catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+
+                    desc.setText(context.getResources().getString(R.string.productDesc1, prodQuantity, prodKg, prodPrice, prodTax, prodTotalPrice));
+                    //desc.setText(context.getResources().getString(R.string.product_desc_1, Integer.toString(order.getProductQuantity()), Double.toString(product.getProductPrice()), Double.toString(price)));
                 }
 
             }

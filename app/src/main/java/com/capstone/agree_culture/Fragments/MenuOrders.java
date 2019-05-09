@@ -63,7 +63,6 @@ public class MenuOrders extends Fragment implements MenuOrdersListAdapter.OnOrde
 
         buyers.clear();
 
-
         mAdapter = new MenuOrdersListAdapter(this, buyers);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);

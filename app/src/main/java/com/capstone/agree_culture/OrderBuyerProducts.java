@@ -121,10 +121,9 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                 order.setCollectionId(item.getId());
 
 
-                                if(!order.getStatus().equals(Orders.ORDER) && !order.getStatus().equals(Orders.DELIVERY)){
+                                if(!order.getStatus().equals(Orders.ORDER)){
                                     continue;
                                 }
-
 
                                 orders.add(order);
 
@@ -148,14 +147,23 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
 
                                                 products.add(prod);
 
-                                                double price = product.getProductPrice();
+                                                double price = 0;
 
-                                                totalAmount += quantity * price;
+                                                try{
+                                                    price = product.getProductPrice();
+                                                }
+                                                catch (Exception ex){
+                                                    ex.printStackTrace();
+                                                    price = 0;
+                                                }
+
+                                                double taxPercentage = Helper.calculatePercentage(price);
+
+                                                totalAmount += ((quantity * price) + taxPercentage);
 
                                                 DecimalFormat format = new DecimalFormat("#,###.00");
 
                                                 total.setText(getResources().getString(R.string.order_buyer_product_total_amount, "",format.format(totalAmount)));
-
 
                                                 QuantityHolderDeductor quan = new QuantityHolderDeductor();
                                                 quan.setProductUidRef(product.getCollectionId());

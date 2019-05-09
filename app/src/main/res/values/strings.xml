@@ -7,6 +7,27 @@
     <string name="confirm">Confirm</string>
 
 
+    <string name="productDesc1">
+        Quantity : %1$s\n
+        Weight (kg) : %2$s\n
+        Price : &#8369; %3$s\n
+        Tax : %4$s\n
+        Total : &#8369; %5$s
+    </string>
+
+    <string name="productDesc2">
+        Quantity : %1$s\n
+        Weight (kg) : %2$s\n
+        Price per weight : &#8369; %3$s\n
+        Tax : %4$s\n
+        Total : &#8369; %5$s
+    </string>
+
+    <string name="description">Description</string>
+
+    <string name="taxLabel">Tax</string>
+    <string name="taxContent">Tax : %1$s</string>
+
     <string name="invalidSignIn">Invalid Email / Password</string>
 
     <string name="userName">User Name</string>

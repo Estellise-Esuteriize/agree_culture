@@ -91,10 +91,33 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
 
                         item.productName.setText(product.getProductName());
 
-                        double price = (double)product.getProductMinimum() * product.getProductPrice();
+                        double price = (double)fOrders.getProductQuantity() * product.getProductPrice();
+                        double prodTaxAmount = Helper.calculatePercentage(product.getProductPrice());
 
-                        item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.menu_cart_desc, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
+                        price += prodTaxAmount;
 
+                        String prodQuantity = "";
+                        String prodKg = "";
+                        String prodTax = "";
+                        String prodPrice = "";
+                        String prodTotalPrice = "";
+
+                        try{
+                            prodQuantity = Integer.toString(fOrders.getProductQuantity());
+                            prodPrice = Double.toString(product.getProductPrice());
+                            prodTax = Integer.toString(Helper.productTax);
+                            prodTax += "%";
+                            prodTotalPrice = Double.toString(price);
+                            prodKg = product.getProductKg().toString();
+
+                        }
+                        catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
+                        item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.productDesc1, prodQuantity, prodKg, prodPrice, prodTax, prodTotalPrice));
+
+                        //item.productDesc.setText(item.itemView.getContext().getResources().getString(R.string.product_desc_1, Integer.toString(product.getProductMinimum()), Double.toString(product.getProductPrice()), Double.toString(price)));
 
                         if(fOrders.getStatus().equals(Orders.CANCELED) || fOrders.getStatus().equals(Orders.COMPLETED) || fOrders.getStatus().equals(Orders.DELIVERY)){
 
@@ -116,8 +139,10 @@ public class MenuPurchaseHistoryListAdapter extends RecyclerView.Adapter<MenuPur
                     }
                     else{
                         item.productStatus.setText(R.string.product_deleted);
+                        item.productName.setText("");
+                        item.productDesc.setText("");
+                        item.productPhoto.setImageDrawable(null);
                     }
-
 
                 }
                 else{

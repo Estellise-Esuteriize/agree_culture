@@ -35,6 +35,8 @@ public class Helper {
 
     public static List<Messages> newMessage = null;
 
+    public static int productTax = 5;
+
     /**
      *
      */
@@ -47,6 +49,14 @@ public class Helper {
 
     public static final String MESSAGE_ORDER = "A customer has ordered for your products";
 
+
+    public static <T extends Number> double calculatePercentage(T amount){
+
+        double percentage = (double) productTax / 100;
+
+        return amount.doubleValue() * percentage;
+
+    }
 
     public static String userProductType(String user_product_type){
 
