@@ -63,6 +63,9 @@ public class Helper {
         if(user_product_type.equals(GlobalString.CUSTOMER)){
             return GlobalString.DISTRIBUTOR;
         }
+        else if(user_product_type.contains(GlobalString.CUSTOMER)){
+            return GlobalString.DISTRIBUTOR;
+        }
         else if(user_product_type.equals(GlobalString.DISTRIBUTOR)){
             return GlobalString.SUPPLIER;
         }

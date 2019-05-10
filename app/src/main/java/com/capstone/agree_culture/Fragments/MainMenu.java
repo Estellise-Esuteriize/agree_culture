@@ -89,7 +89,7 @@ public class MainMenu extends Fragment {
          * 3. if
          *      - if role is supplier disabled both search
          */
-        if(currentUser.getRole().equals(GlobalString.CUSTOMER)){
+        if(currentUser.getRole().equals(GlobalString.CUSTOMER) || currentUser.getRole().contains(GlobalString.CUSTOMER)){
             home_supplier.setEnabled(false);
             home_supplier.getBackground().setAlpha(64);
             home_supplier.getResources().getDrawable(R.drawable.ic_menu_manage).setAlpha(64);

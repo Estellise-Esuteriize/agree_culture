@@ -190,7 +190,8 @@
     <!-- Sign up Spinner items -->
     <string name="sign_up_user_type_placeholder">Choose Role</string>
     <string-array name="sign_up_user_type">
-        <item>Customer</item>
+        <item>Customer - Retailer</item>
+        <item>Customer - Wholesale</item>
         <item>Distributor</item>
         <item>Supplier</item>
     </string-array>

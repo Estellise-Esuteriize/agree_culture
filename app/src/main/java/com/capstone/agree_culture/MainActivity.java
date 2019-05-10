@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity
 
                         Helper.currentUser = currentUser;
 
-                        if (currentUser.getRole().equals(GlobalString.CUSTOMER)) {
+                        if (currentUser.getRole().equals(GlobalString.CUSTOMER) || currentUser.getRole().contains(GlobalString.CUSTOMER)) {
                             menu.findItem(R.id.nav_products).setVisible(false);
                             menu.findItem(R.id.nav_orders).setVisible(false);
                         } else if (currentUser.getRole().equals(GlobalString.DISTRIBUTOR)) {
