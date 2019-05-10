@@ -60,10 +60,7 @@ public class Helper {
 
     public static String userProductType(String user_product_type){
 
-        if(user_product_type.equals(GlobalString.CUSTOMER)){
-            return GlobalString.DISTRIBUTOR;
-        }
-        else if(user_product_type.contains(GlobalString.CUSTOMER)){
+        if(user_product_type.equals(GlobalString.CUSTOMER) || user_product_type.contains(GlobalString.CUSTOMER)){
             return GlobalString.DISTRIBUTOR;
         }
         else if(user_product_type.equals(GlobalString.DISTRIBUTOR)){
