@@ -213,6 +213,13 @@ public class SupplierDeliverProductTest {
                                 3)));
         appCompatButton3.perform(scrollTo(), click());
 
+        try {
+            Thread.sleep(5000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
         ViewInteraction appCompatImageButton2 = onView(
                 allOf(withContentDescription("Navigate up"),
                         childAtPosition(
