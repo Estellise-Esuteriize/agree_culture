@@ -1,6 +1,8 @@
 package com.capstone.agree_culture;
 
 
+import android.os.strictmode.IntentReceiverLeakedViolation;
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -44,63 +46,70 @@ public class DistributorCheckPurchaseHistory {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        ViewInteraction actionMenuItemView = onView(
-                allOf(withId(R.id.home_login), withContentDescription("Login"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        1),
-                                0),
-                        isDisplayed()));
-        actionMenuItemView.perform(click());
+
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            ViewInteraction actionMenuItemView = onView(
+                    allOf(withId(R.id.home_login), withContentDescription("Login"),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withId(R.id.toolbar),
+                                            1),
+                                    0),
+                            isDisplayed()));
+            actionMenuItemView.perform(click());
+
+            // Added a sleep statement to match the app's execution delay.
+            // The recommended way to handle such scenarios is to use Espresso idling resources:
+            // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            ViewInteraction appCompatAutoCompleteTextView = onView(
+                    allOf(withId(R.id.email),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withClassName(is("android.support.design.widget.TextInputLayout")),
+                                            0),
+                                    0)));
+            appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("distributor@gmail.com"), closeSoftKeyboard());
+
+            ViewInteraction appCompatEditText = onView(
+                    allOf(withId(R.id.password),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withClassName(is("android.support.design.widget.TextInputLayout")),
+                                            0),
+                                    0)));
+            appCompatEditText.perform(scrollTo(), replaceText("123123"), closeSoftKeyboard());
+
+            ViewInteraction appCompatButton = onView(
+                    allOf(withId(R.id.sign_in_button), withText("Sign in"),
+                            childAtPosition(
+                                    allOf(withId(R.id.email_login_form),
+                                            childAtPosition(
+                                                    withId(R.id.login_form),
+                                                    0)),
+                                    2)));
+            appCompatButton.perform(scrollTo(), click());
+        }
+        catch (NoMatchingViewException ex){
+            ex.printStackTrace();
+        }
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ViewInteraction appCompatAutoCompleteTextView = onView(
-                allOf(withId(R.id.email),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("distributor@gmail.com"), closeSoftKeyboard());
-
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.password),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatEditText.perform(scrollTo(), replaceText("123123"), closeSoftKeyboard());
-
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.sign_in_button), withText("Sign in"),
-                        childAtPosition(
-                                allOf(withId(R.id.email_login_form),
-                                        childAtPosition(
-                                                withId(R.id.login_form),
-                                                0)),
-                                2)));
-        appCompatButton.perform(scrollTo(), click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(7000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -126,12 +135,27 @@ public class DistributorCheckPurchaseHistory {
                         isDisplayed()));
         navigationMenuItemView.perform(click());
 
-        ViewInteraction recyclerView = onView(
-                allOf(withId(R.id.menu_purchase_history_recycler),
-                        childAtPosition(
-                                withClassName(is("android.support.constraint.ConstraintLayout")),
-                                0)));
-        recyclerView.perform(actionOnItemAtPosition(1, click()));
+        try{
+            Thread.sleep(7000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+
+        try{
+
+            ViewInteraction recyclerView = onView(
+                    allOf(withId(R.id.menu_purchase_history_recycler),
+                            childAtPosition(
+                                    withClassName(is("android.support.constraint.ConstraintLayout")),
+                                    0)));
+            recyclerView.perform(actionOnItemAtPosition(1, click()));
+
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
@@ -153,6 +177,8 @@ public class DistributorCheckPurchaseHistory {
             e.printStackTrace();
         }
 
+        appCompatImageButton.perform(click());
+
         ViewInteraction navigationMenuItemView2 = onView(
                 allOf(childAtPosition(
                         allOf(withId(R.id.design_navigation_view),
@@ -162,6 +188,13 @@ public class DistributorCheckPurchaseHistory {
                         1),
                         isDisplayed()));
         navigationMenuItemView2.perform(click());
+
+        try{
+            Thread.sleep(3000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
     }
 
     private static Matcher<View> childAtPosition(
