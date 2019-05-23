@@ -2,6 +2,7 @@ package com.capstone.agree_culture;
 
 
 import android.os.strictmode.IntentReceiverLeakedViolation;
+import android.support.test.espresso.NoActivityResumedException;
 import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
@@ -142,42 +143,22 @@ public class DistributorCheckPurchaseHistory {
             ex.printStackTrace();
         }
 
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
 
         try{
-
-            ViewInteraction recyclerView = onView(
-                    allOf(withId(R.id.menu_purchase_history_recycler),
-                            childAtPosition(
-                                    withClassName(is("android.support.constraint.ConstraintLayout")),
-                                    0)));
-            recyclerView.perform(actionOnItemAtPosition(1, click()));
-
+            appCompatImageButton.perform(click());
         }
-        catch (Exception ex){
+        catch (NoActivityResumedException ex){
             ex.printStackTrace();
         }
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        pressBack();
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        appCompatImageButton.perform(click());
 
         ViewInteraction navigationMenuItemView2 = onView(
                 allOf(childAtPosition(
