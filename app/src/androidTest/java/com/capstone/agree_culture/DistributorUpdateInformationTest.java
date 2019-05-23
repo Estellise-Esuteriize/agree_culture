@@ -1,6 +1,7 @@
 package com.capstone.agree_culture;
 
 
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
@@ -42,92 +43,71 @@ public class DistributorUpdateInformationTest {
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        try{
 
-        ViewInteraction actionMenuItemView = onView(
-                allOf(withId(R.id.home_login), withContentDescription("Login"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.toolbar),
-                                        1),
-                                0),
-                        isDisplayed()));
-        actionMenuItemView.perform(click());
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            ViewInteraction actionMenuItemView = onView(
+                    allOf(withId(R.id.home_login), withContentDescription("Login"),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withId(R.id.toolbar),
+                                            1),
+                                    0),
+                            isDisplayed()));
+            actionMenuItemView.perform(click());
+
+            // Added a sleep statement to match the app's execution delay.
+            // The recommended way to handle such scenarios is to use Espresso idling resources:
+            // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+            try {
+                Thread.sleep(7000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            ViewInteraction appCompatAutoCompleteTextView = onView(
+                    allOf(withId(R.id.email),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withClassName(is("android.support.design.widget.TextInputLayout")),
+                                            0),
+                                    0)));
+            appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("distributor@gmail.com"), closeSoftKeyboard());
+
+            ViewInteraction appCompatEditText = onView(
+                    allOf(withId(R.id.password),
+                            childAtPosition(
+                                    childAtPosition(
+                                            withClassName(is("android.support.design.widget.TextInputLayout")),
+                                            0),
+                                    0)));
+            appCompatEditText.perform(scrollTo(), replaceText("123123"), closeSoftKeyboard());
+
+            ViewInteraction appCompatButton = onView(
+                    allOf(withId(R.id.sign_in_button), withText("Sign in"),
+                            childAtPosition(
+                                    allOf(withId(R.id.email_login_form),
+                                            childAtPosition(
+                                                    withId(R.id.login_form),
+                                                    0)),
+                                    2)));
+            appCompatButton.perform(scrollTo(), click());
+
+        }
+        catch (NoMatchingViewException ex){
+            ex.printStackTrace();
+        }
 
         // Added a sleep statement to match the app's execution delay.
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ViewInteraction appCompatAutoCompleteTextView = onView(
-                allOf(withId(R.id.email),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatAutoCompleteTextView.perform(scrollTo(), replaceText("distributor@gmail"), closeSoftKeyboard());
-
-        ViewInteraction appCompatAutoCompleteTextView2 = onView(
-                allOf(withId(R.id.email), withText("distributor@gmail"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatAutoCompleteTextView2.perform(pressImeActionButton());
-
-        ViewInteraction appCompatAutoCompleteTextView3 = onView(
-                allOf(withId(R.id.email), withText("distributor@gmail"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatAutoCompleteTextView3.perform(scrollTo(), replaceText("distributor@gmail.com"));
-
-        ViewInteraction appCompatAutoCompleteTextView4 = onView(
-                allOf(withId(R.id.email), withText("distributor@gmail.com"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0),
-                        isDisplayed()));
-        appCompatAutoCompleteTextView4.perform(closeSoftKeyboard());
-
-        ViewInteraction appCompatEditText = onView(
-                allOf(withId(R.id.password),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0)));
-        appCompatEditText.perform(scrollTo(), replaceText("123123"), closeSoftKeyboard());
-
-        ViewInteraction appCompatButton = onView(
-                allOf(withId(R.id.sign_in_button), withText("Sign in"),
-                        childAtPosition(
-                                allOf(withId(R.id.email_login_form),
-                                        childAtPosition(
-                                                withId(R.id.login_form),
-                                                0)),
-                                2)));
-        appCompatButton.perform(scrollTo(), click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(7000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -163,7 +143,7 @@ public class DistributorUpdateInformationTest {
         }
 
         ViewInteraction textInputEditText = onView(
-                allOf(withId(R.id.sign_up_full_name), withText("DistributorKooo"),
+                allOf(withId(R.id.sign_up_full_name),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.support.design.widget.TextInputLayout")),
@@ -172,23 +152,13 @@ public class DistributorUpdateInformationTest {
         textInputEditText.perform(scrollTo(), click());
 
         ViewInteraction textInputEditText2 = onView(
-                allOf(withId(R.id.sign_up_full_name), withText("DistributorKooo"),
+                allOf(withId(R.id.sign_up_full_name),
                         childAtPosition(
                                 childAtPosition(
                                         withClassName(is("android.support.design.widget.TextInputLayout")),
                                         0),
                                 0)));
-        textInputEditText2.perform(scrollTo(), replaceText("DistributorKo"));
-
-        ViewInteraction textInputEditText3 = onView(
-                allOf(withId(R.id.sign_up_full_name), withText("DistributorKo"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.support.design.widget.TextInputLayout")),
-                                        0),
-                                0),
-                        isDisplayed()));
-        textInputEditText3.perform(closeSoftKeyboard());
+        textInputEditText2.perform(scrollTo(), replaceText("DistributorKo"), closeSoftKeyboard());
 
         ViewInteraction appCompatButton2 = onView(
                 allOf(withId(R.id.sign_up_button), withText("Update Information"),
@@ -198,6 +168,14 @@ public class DistributorUpdateInformationTest {
                                         0),
                                 8)));
         appCompatButton2.perform(scrollTo(), click());
+
+        try{
+            Thread.sleep(5000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
     }
 
     private static Matcher<View> childAtPosition(
