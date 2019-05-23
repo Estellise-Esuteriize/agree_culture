@@ -100,8 +100,13 @@ public class OrderBuyerProductList extends RecyclerView.Adapter<OrderBuyerProduc
 
                         Glide.with(item.itemView.getContext()).load(product.getProductPhoto()).placeholder(R.drawable.imageview_rectangular).into(item.photo);
 
+                        try{
+                            item.name.setText(product.getProductName());
+                        }
+                        catch (Exception ex){
+                            ex.printStackTrace();
+                        }
                         /*
-                        item.name.setText(product.getProductName());
                         item.quantity.setText(item.itemView.getContext().getResources().getString(R.string.buyer_list_quantity, String.format("%s", quantity)));
                         item.price.setText(item.itemView.getContext().getResources().getString(R.string.order_buyer_product_total_amount, "Price per kg.", format.format(price)));
 
