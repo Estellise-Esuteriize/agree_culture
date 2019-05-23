@@ -126,8 +126,6 @@ public class LoginActivity extends AppCompatActivity{
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
 
-
-
                 progress_bar.setVisibility(View.GONE);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
