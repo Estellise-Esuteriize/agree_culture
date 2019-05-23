@@ -23,6 +23,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
@@ -87,8 +88,6 @@ public class SupplierCreateProductTest {
                                             0),
                                     0)));
             appCompatEditText.perform(scrollTo(), replaceText("123123"), closeSoftKeyboard());
-
-            pressBack();
 
             ViewInteraction appCompatButton = onView(
                     allOf(withId(R.id.sign_in_button), withText("Sign in"),
@@ -171,6 +170,13 @@ public class SupplierCreateProductTest {
                         isDisplayed()));
         textInputEditText.perform(replaceText("Prodname"), closeSoftKeyboard());
 
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
         ViewInteraction textInputEditText2 = onView(
                 allOf(withId(R.id.product_create_price),
                         childAtPosition(
@@ -180,6 +186,13 @@ public class SupplierCreateProductTest {
                                 1),
                         isDisplayed()));
         textInputEditText2.perform(replaceText("120"), closeSoftKeyboard());
+
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
 
         ViewInteraction textInputEditText3 = onView(
                 allOf(withId(R.id.product_create_quantity),
@@ -191,6 +204,15 @@ public class SupplierCreateProductTest {
                         isDisplayed()));
         textInputEditText3.perform(replaceText("100"), closeSoftKeyboard());
 
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        onView(withId(R.id.product_create_minimum)).perform(scrollTo()).check(matches(isDisplayed()));
+
         ViewInteraction textInputEditText4 = onView(
                 allOf(withId(R.id.product_create_minimum),
                         childAtPosition(
@@ -201,6 +223,14 @@ public class SupplierCreateProductTest {
                         isDisplayed()));
         textInputEditText4.perform(replaceText("5"), closeSoftKeyboard());
 
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
+
+        onView(withId(R.id.product_create_kg)).perform(scrollTo()).check(matches(isDisplayed()));
         ViewInteraction textInputEditText5 = onView(
                 allOf(withId(R.id.product_create_kg),
                         childAtPosition(
@@ -210,6 +240,13 @@ public class SupplierCreateProductTest {
                                 0),
                         isDisplayed()));
         textInputEditText5.perform(replaceText("2"), closeSoftKeyboard());
+
+        try {
+            Thread.sleep(2000);
+        }
+        catch (InterruptedException ex){
+            ex.printStackTrace();
+        }
 
         ViewInteraction appCompatImageView = onView(
                 allOf(withId(R.id.product_create_image), withContentDescription("Navigation header"),
@@ -224,7 +261,7 @@ public class SupplierCreateProductTest {
         // The recommended way to handle such scenarios is to use Espresso idling resources:
         // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
-            Thread.sleep(7000);
+            Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -239,46 +276,10 @@ public class SupplierCreateProductTest {
         appCompatButton2.perform(scrollTo(), click());
 
         try {
-            Thread.sleep(10000);
+            Thread.sleep(20000);
         }
         catch (InterruptedException ex){
             ex.printStackTrace();
-        }
-
-        ViewInteraction appCompatImageView2 = onView(
-                allOf(withId(R.id.product_create_image), withContentDescription("Navigation header"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.LinearLayout")),
-                                        0),
-                                0)));
-        appCompatImageView2.perform(scrollTo(), click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        ViewInteraction appCompatButton3 = onView(
-                allOf(withId(R.id.product_create_btn), withText("Create"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withClassName(is("android.widget.ScrollView")),
-                                        0),
-                                1)));
-        appCompatButton3.perform(scrollTo(), click());
-
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
 
         ViewInteraction appCompatImageButton2 = onView(
