@@ -130,10 +130,16 @@ public class LoginActivity extends AppCompatActivity{
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
                 if(task.isSuccessful()){
-                    Intent intent = new Intent(cont, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    finish();
-                    startActivity(intent);
+                    try{
+                        Intent intent = new Intent(cont, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                    catch (Exception ex){
+                        ex.printStackTrace();
+                        Helper.ToastDisplayer(cont, "Login error, try again", Toast.LENGTH_LONG);
+                    }
                 }
                 else{
 
