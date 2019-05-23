@@ -22,6 +22,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.action.ViewActions.scrollTo;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
@@ -113,6 +114,17 @@ public class SupplierUpdateProductTest {
             e.printStackTrace();
         }
 
+        ViewInteraction appCompatImageButton1 = onView(
+                allOf(withContentDescription("Open navigation drawer"),
+                        childAtPosition(
+                                allOf(withId(R.id.toolbar),
+                                        childAtPosition(
+                                                withClassName(is("android.support.design.widget.AppBarLayout")),
+                                                0)),
+                                0),
+                        isDisplayed()));
+        appCompatImageButton1.perform(click());
+
         ViewInteraction navigationMenuItemView = onView(
                 allOf(childAtPosition(
                         allOf(withId(R.id.design_navigation_view),
@@ -157,6 +169,7 @@ public class SupplierUpdateProductTest {
         textInputEditText.perform(replaceText("Prodtesttt"), closeSoftKeyboard());
 
 
+        onView(withId(R.id.product_create_kg)).perform(scrollTo()).check(matches(isDisplayed()));
         ViewInteraction textInputEditText3 = onView(
                 allOf(withId(R.id.product_create_kg),
                         childAtPosition(
