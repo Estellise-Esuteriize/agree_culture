@@ -121,7 +121,7 @@ public class OrderBuyerProducts extends AppCompatActivity implements OrderBuyerP
                                 order.setCollectionId(item.getId());
 
 
-                                if(!order.getStatus().equals(Orders.ORDER)){
+                                if(!order.getStatus().equals(Orders.ORDER) && !order.getStatus().equals(Orders.DELIVERY)){
                                     continue;
                                 }
 
