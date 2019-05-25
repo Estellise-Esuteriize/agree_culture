@@ -14,6 +14,7 @@ import com.capstone.agree_culture.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Helper {
 
@@ -146,6 +147,17 @@ public class Helper {
     public static void ProgressRemover(final Context context, final View progressBar){
         progressBar.setVisibility(View.GONE);
         ((Activity)context).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+    }
+
+
+    public static int RandomNumber(int min, int max){
+        Random rand = new Random();
+        return rand.nextInt(100);
+    }
+
+    public static int RandomNumber(){
+        Random rand = new Random();
+        return rand.nextInt(100);
     }
 
 

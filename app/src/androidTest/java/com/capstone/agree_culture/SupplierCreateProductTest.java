@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 
+import com.capstone.agree_culture.Helper.Helper;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -168,7 +170,7 @@ public class SupplierCreateProductTest {
                                         0),
                                 0),
                         isDisplayed()));
-        textInputEditText.perform(replaceText("Prodname"), closeSoftKeyboard());
+        textInputEditText.perform(replaceText("Prodname" + Helper.RandomNumber()), closeSoftKeyboard());
 
         try {
             Thread.sleep(2000);
