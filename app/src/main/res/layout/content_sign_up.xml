@@ -117,12 +117,10 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentBottom="true"
-                        android:layout_alignEnd="@id/sign_up_search_address"
+                        android:layout_alignParentEnd="true"
                         android:id="@+id/sign_up_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:focusable="false"
                         android:hint="@string/sign_up_address"
                         android:maxLength="50"
                         android:maxLines="1"
@@ -130,7 +128,9 @@
 
                 </android.support.design.widget.TextInputLayout>
 
+                <!-- uncomment visibility this if google places api is used-->
                 <Button
+                    android:visibility="gone"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:id="@+id/sign_up_search_address"
@@ -230,3 +230,10 @@
 
 
 </android.support.constraint.ConstraintLayout>
+
+<!-- Start -->
+    <!-- add this to address if create button is enable -->
+    <!--android:layout_alignEnd="@id/sign_up_search_address"-->
+    <!--android:clickable="false"-->
+    <!--android:focusable="false"-->
+<!-- End -->
