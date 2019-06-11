@@ -216,7 +216,6 @@ public class MainActivity extends AppCompatActivity
         /**
          * Getting ITEXMO API
          */
-
         mDatabase.collection(GlobalString.SETTINGS).document(GlobalString.ITEXMO).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -225,8 +224,6 @@ public class MainActivity extends AppCompatActivity
                     try{
                         DocumentSnapshot document = task.getResult();
                         Helper.ITEXMO_API = (String) document.get(GlobalString.API);
-
-                        Log.d("TEXTT", (String) document.get(GlobalString.API));
                     }
                     catch (Exception ex){
                         Helper.ITEXMO_API = Helper.ITEXMO_API_CURRENT;
