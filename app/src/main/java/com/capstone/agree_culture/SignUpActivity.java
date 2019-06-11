@@ -135,13 +135,9 @@ public class SignUpActivity extends AppCompatActivity {
         sign_up_city = (EditText) findViewById(R.id.sign_up_city);
         sign_up_phone_number = (EditText) findViewById(R.id.sign_up_phone_number);
         sign_up_confirm = (Button) findViewById(R.id.sign_up_button);
+        searchPlace = (Button) findViewById(R.id.sign_up_search_address);
 
-        try{
-            searchPlace = (Button) findViewById(R.id.sign_up_search_address);
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
+
 
 
         progress_bar = findViewById(R.id.progress_bar);
@@ -165,12 +161,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         }
 
-        try{
-            searchPlace.setOnClickListener(new SearchPlace());
-        }
-        catch (Exception ex){
-            ex.printStackTrace();
-        }
+        searchPlace.setOnClickListener(new SearchPlace());
 
         sign_up_confirm.setOnClickListener(new SignUpConfirm());
 

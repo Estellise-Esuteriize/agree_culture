@@ -23,6 +23,11 @@ public class GlobalString {
     public static String MESSAGES = "messages";
     public static String DELIVERY = "delivery";
     public static String PLACES = "places";
+    public static String SETTINGS = "settings";
+
+
+    public static String ITEXMO = "itexmo";
+    public static String API = "api";
 
     /**
      * Firebase Storage Folders

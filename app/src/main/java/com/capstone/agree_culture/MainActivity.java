@@ -57,6 +57,7 @@ import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.rpc.Help;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -210,6 +211,40 @@ public class MainActivity extends AppCompatActivity
             menu.findItem(R.id.nav_purchase_history).setVisible(false);
             menu.findItem(R.id.nav_account_edit).setVisible(false);
         }
+
+
+        /**
+         * Getting ITEXMO API
+         */
+
+        mDatabase.collection(GlobalString.SETTINGS).document(GlobalString.ITEXMO).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+
+                    try{
+                        DocumentSnapshot document = task.getResult();
+                        Helper.ITEXMO_API = (String) document.get(GlobalString.API);
+
+                        Log.d("TEXTT", (String) document.get(GlobalString.API));
+                    }
+                    catch (Exception ex){
+                        Helper.ITEXMO_API = Helper.ITEXMO_API_CURRENT;
+                    }
+
+                }
+                else{
+                    try{
+                        throw task.getException();
+                    }
+                    catch (Exception ex){
+                        ex.printStackTrace();
+
+                        Helper.ITEXMO_API = Helper.ITEXMO_API_CURRENT;
+                    }
+                }
+            }
+        });
 
     }
 

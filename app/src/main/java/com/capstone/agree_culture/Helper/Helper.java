@@ -24,7 +24,8 @@ public class Helper {
      * new ITEX MO API
      *  - TR-AGREE086823_M6A9V
      */
-    public static final String ITEXMO_API = "TR-AGREE086823_M6A9V";
+    public static String ITEXMO_API = "TR-AGREE786999_WLFS8";
+    public static final String ITEXMO_API_CURRENT = "TR-AGREE786999_WLFS8";
 
     public static final String API_GOOGLE_GEO = "AIzaSyBCXGVFnN4GANxHUo4E90Q3gOhcZgE8reo";
 
